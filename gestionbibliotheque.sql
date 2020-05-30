@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : sam. 30 mai 2020 à 20:37
+-- Généré le : sam. 30 mai 2020 à 21:18
 -- Version du serveur :  10.4.11-MariaDB
 -- Version de PHP : 7.4.2
 
@@ -165,7 +165,9 @@ ALTER TABLE `bibliothecaire`
 --
 ALTER TABLE `emprunt`
   ADD PRIMARY KEY (`numLecteur`,`cote`),
-  ADD UNIQUE KEY `FK_empr` (`numLecteur`,`cote`);
+  ADD UNIQUE KEY `FK_empr` (`numLecteur`,`cote`),
+  ADD KEY `FK_emp2` (`cote`),
+  ADD KEY `FK_bibliothecaire` (`idBibliothecaire`);
 
 --
 -- Index pour la table `enseignant`
@@ -185,7 +187,8 @@ ALTER TABLE `etudiant`
 -- Index pour la table `exemplaire`
 --
 ALTER TABLE `exemplaire`
-  ADD PRIMARY KEY (`cote`);
+  ADD PRIMARY KEY (`cote`),
+  ADD KEY `FK_livre` (`idLivre`);
 
 --
 -- Index pour la table `livre`
@@ -198,7 +201,8 @@ ALTER TABLE `livre`
 --
 ALTER TABLE `reservation`
   ADD PRIMARY KEY (`numLecteur`,`cote`),
-  ADD UNIQUE KEY `FK_reserv` (`numLecteur`,`cote`) USING BTREE;
+  ADD UNIQUE KEY `FK_reserv` (`numLecteur`,`cote`) USING BTREE,
+  ADD KEY `FK_reserv2` (`cote`);
 
 --
 -- Index pour la table `revue`
@@ -260,6 +264,7 @@ ALTER TABLE `revue`
 -- Contraintes pour la table `emprunt`
 --
 ALTER TABLE `emprunt`
+  ADD CONSTRAINT `FK_bibliothecaire` FOREIGN KEY (`idBibliothecaire`) REFERENCES `bibliothecaire` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `FK_emp1` FOREIGN KEY (`numLecteur`) REFERENCES `adherant` (`numLecteur`),
   ADD CONSTRAINT `FK_emp2` FOREIGN KEY (`cote`) REFERENCES `exemplaire` (`cote`);
 
@@ -274,6 +279,12 @@ ALTER TABLE `enseignant`
 --
 ALTER TABLE `etudiant`
   ADD CONSTRAINT `FK_etud` FOREIGN KEY (`numLecteur`) REFERENCES `adherant` (`numLecteur`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Contraintes pour la table `exemplaire`
+--
+ALTER TABLE `exemplaire`
+  ADD CONSTRAINT `FK_livre` FOREIGN KEY (`idLivre`) REFERENCES `livre` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Contraintes pour la table `reservation`
