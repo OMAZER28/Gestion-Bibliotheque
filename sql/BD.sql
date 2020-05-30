@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : sam. 30 mai 2020 à 21:18
+-- Généré le : sam. 30 mai 2020 à 21:44
 -- Version du serveur :  10.4.11-MariaDB
 -- Version de PHP : 7.4.2
 
@@ -21,6 +21,9 @@ SET time_zone = "+00:00";
 --
 -- Base de données : `gestionbibliotheque`
 --
+DROP DATABASE IF EXISTS `gestionbibliotheque`;
+CREATE DATABASE IF NOT EXISTS `gestionbibliotheque` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `gestionbibliotheque`;
 
 -- --------------------------------------------------------
 
@@ -36,12 +39,7 @@ CREATE TABLE `adherant` (
   `nom` varchar(55) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Déchargement des données de la table `adherant`
---
 
-INSERT INTO `adherant` (`numLecteur`, `login`, `mdp`, `nbMax`, `nom`) VALUES
-(44, 'hjjj', 'jjkjj', 4, '');
 
 -- --------------------------------------------------------
 
