@@ -1,5 +1,6 @@
 package gestionBibliotheque.model;
 
-public class Bibliothecaire {
-
+public class Bibliothecaire extends Utilisateur {
+	private int id;
+	private String dateNaissance;
 }

@@ -1,5 +1,5 @@
 package gestionBibliotheque.model;
 
-public class Revue {
-
+public class Revue extends Document {
+	private String periodicite;
 }
