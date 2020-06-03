@@ -38,9 +38,5 @@ public class Utilisateur {
 	@Override
 	public String toString() {
 		return "";
-	}
-	
-	
-	
-	
+	}	
 }
