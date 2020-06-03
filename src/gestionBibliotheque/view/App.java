@@ -9,7 +9,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 public class App extends JFrame {
-
 	private static final long serialVersionUID = 1L;
 	private CardLayout cl;
 	private JPanel contentPane;
@@ -56,6 +55,8 @@ public class App extends JFrame {
         
         signUpBibliothecairePage = new SignUpBibliothecaire(cl, cards, true, true, false);
         cards.add(signUpBibliothecairePage, "sign up bibliothecaire page");
+        
+        
         
         homePage = new Home(cl, cards);
         cards.add(homePage, "home page");

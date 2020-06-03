@@ -9,6 +9,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import gestionBibliotheque.controller.UtilisateurController;
+import gestionBibliotheque.model.utilisateurs.Bibliothecaire;
+import gestionBibliotheque.model.utilisateurs.Etudiant;
 
 import java.awt.Image;
 import java.awt.Insets;
@@ -76,8 +78,9 @@ public class SignUpEtudiant extends JPanel {
 	private GridBagConstraints gbcHeader;
 	private GridBagConstraints gbcFooter;
 	//Controller
-	private UtilisateurController controller;
-	
+
+	private UtilisateurController uc;
+
 	//Sign Up Screen constructor
 	public SignUpEtudiant(CardLayout cl, JPanel cards, boolean etdSelected, boolean ensSelected, boolean bibSelected) {
 			
@@ -257,16 +260,18 @@ public class SignUpEtudiant extends JPanel {
 		signUpButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				controller = new UtilisateurController("etudiant",
-						  userNameInput.getText(),
-						  emailInput.getText(), 
-						  motDePasseInput.getText(), 
-						  cneInput.getText(), 
-						  adresseInput.getText(), 
-						  String.valueOf(filliereList.getSelectedItem()), 
-						  "", 
-						  "");
-				controller.inscription();
+				String name = userNameInput.getText();
+				String email = emailInput.getText();
+				String mdp = motDePasseInput.getText();
+				String cne = cneInput.getText();
+				String adresse = adresseInput.getText();
+				String fil= fillieres[filliereList.getSelectedIndex()];
+				
+				Etudiant et = new Etudiant(email,mdp,name,0,cne,adresse,fil);
+				uc =new UtilisateurController("add",et);
+				
+				
+				
 				cl.show(cards, "home page");
 			}
 		});

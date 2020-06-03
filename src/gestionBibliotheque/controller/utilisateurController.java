@@ -2,58 +2,68 @@ package gestionBibliotheque.controller;
 
 import gestionBibliotheque.dao.DAOException;
 import gestionBibliotheque.dao.utilisateurs.EtudiantDAO;
+import gestionBibliotheque.dao.utilisateurs.EnseignantDAO;
+import gestionBibliotheque.dao.utilisateurs.BibliothecaireDAO;
+import gestionBibliotheque.dao.utilisateurs.UtilisateurDAO;
+import gestionBibliotheque.model.utilisateurs.Bibliothecaire;
 import gestionBibliotheque.model.utilisateurs.Etudiant;
+import gestionBibliotheque.model.utilisateurs.Enseignant;
+import gestionBibliotheque.model.utilisateurs.Utilisateur;
 
 public class UtilisateurController {
-	//input fields
-	private String userNameInput;
-	private String emailInput;
-	private String motDePasseInput;
-	private String cneInput;
-	private String adresseInput;
-	private String dateNaissanceInput;
-	private String filliereList;
-	private String departementList;
-	//user
-	private String user;
-	//dao
-	private EtudiantDAO etudiantDAO;
-	//modal
-	private Etudiant etudiant;
+	private String op;
+	private Utilisateur user;
 	
-	public UtilisateurController(String user,
-								 String userNameInput,
-								 String emailInput, 
-								 String motDePasseInput, 
-								 String cneInput, 
-								 String adresseInput, 
-								 String filliereList, 
-								 String departementList, 
-								 String dateNaissanceInput) {
-		try {
-			etudiantDAO = new EtudiantDAO();
-		} catch(DAOException e) {
-			System.out.println(e.getMessage());
-		}
+	public UtilisateurController(String op, Utilisateur user) {
+		this.op = op;
 		this.user = user;
-		this.userNameInput = userNameInput;
-		this.emailInput = emailInput;
-		this.motDePasseInput = motDePasseInput;
-		this.cneInput = cneInput;
-		this.adresseInput = adresseInput;
-		this.filliereList = filliereList;
-		this.departementList = departementList;
-		this.dateNaissanceInput = dateNaissanceInput;
+		this.executeOp(op, user);
+	}
+
+	public String getOp() {
+		return op;
+	}
+
+	public void setOp(String op) {
+		this.op = op;
+	}
+
+	public Utilisateur getUser() {
+		return user;
+	}
+
+	public void setUser(Utilisateur user) {
+		this.user = user;
 	}
 	
-	public void inscription() {
-		if(user == "etudiant") {
-			etudiant = new Etudiant(emailInput,  motDePasseInput,  userNameInput, 1, 20,  cneInput,  adresseInput, filliereList);
-			try {
-				etudiantDAO.addEtudiant(etudiant);
-			} catch(DAOException e) {
-				System.out.println(e.getMessage());
+	public void executeOp(String op, Utilisateur user) {
+		if(this.getOp()=="add") {
+			if(user instanceof Bibliothecaire ) {
+				try {
+					BibliothecaireDAO bibDAO= new BibliothecaireDAO();
+					bibDAO.addBibliothecaire((Bibliothecaire) user);
+					} catch(DAOException ex) {
+						System.out.println(ex);
+					}
+			}
+			else if(user instanceof Etudiant ) {
+				try {
+					EtudiantDAO etDAO= new EtudiantDAO();
+					etDAO.addEtudiant((Etudiant) user);
+					} catch(DAOException ex) {
+						System.out.println(ex);
+					}
+			}
+			else if(user instanceof Enseignant) {
+				try {
+					EnseignantDAO enDAO= new EnseignantDAO();
+					enDAO.addEnseignant((Enseignant) user);
+					} catch(DAOException ex) {
+						System.out.println(ex);
+					}
 			}
 		}
 	}
+	
+	
 }

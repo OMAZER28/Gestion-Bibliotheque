@@ -3,8 +3,8 @@ package gestionBibliotheque.model.utilisateurs;
 public class Enseignant extends Adherant {
 	private String departement;
 
-	public Enseignant(String login, String mdp, String nom, int numLecteur, int nbMax, String departement) {
-		super(login, mdp, nom, numLecteur, nbMax);
+	public Enseignant(String login, String mdp, String nom, int numLecteur, String departement) {
+		super(login, mdp, nom, numLecteur, 4);
 		this.departement = departement;
 	}
 

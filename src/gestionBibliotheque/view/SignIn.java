@@ -8,6 +8,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import gestionBibliotheque.controller.UtilisateurController;
+import gestionBibliotheque.dao.DAOException;
+import gestionBibliotheque.dao.utilisateurs.UtilisateurDAO;
+import gestionBibliotheque.model.utilisateurs.Etudiant;
+import gestionBibliotheque.model.utilisateurs.Utilisateur;
+
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.font.TextAttribute;
@@ -46,6 +52,8 @@ public class SignIn extends JPanel {
 	private PlaceholderTextField emailInput;
 	private PlaceholderTextField motDePasseInput;
 	
+	private UtilisateurController uc;
+
 	//Sign In Screen constructor
 	public SignIn(CardLayout cl, JPanel cards) {
 		
@@ -153,7 +161,20 @@ public class SignIn extends JPanel {
 		signInButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	cl.show(cards, "home page");
+				String email = emailInput.getText();
+				String mdp = motDePasseInput.getText();
+				
+				Utilisateur user = new Utilisateur(email,mdp);
+				try {
+					UtilisateurDAO userDAO= new UtilisateurDAO();
+						if(userDAO.signin(user)) {
+							cl.show(cards, "home page");
+						}else {
+							System.out.println("utilisateur introuvable");
+						}
+					} catch(DAOException ex) {
+						System.out.println(ex);
+					}
             }
         });
 		signInButton.setFont(new Font("Century Gothic", Font.BOLD, 14));

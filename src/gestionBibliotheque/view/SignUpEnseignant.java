@@ -8,6 +8,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import gestionBibliotheque.controller.UtilisateurController;
+import gestionBibliotheque.model.utilisateurs.Enseignant;
+import gestionBibliotheque.model.utilisateurs.Etudiant;
+
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.image.BufferedImage;
@@ -67,6 +71,9 @@ public class SignUpEnseignant extends JPanel {
 	private GridBagConstraints gbcSignUpLink;
 	private GridBagConstraints gbcHeader;
 	private GridBagConstraints gbcFooter;
+	
+	private UtilisateurController uc;
+
 	
 	//Sign Up Screen constructor
 	public SignUpEnseignant(CardLayout cl, JPanel cards, boolean etdSelected, boolean ensSelected, boolean bibSelected) {
@@ -200,7 +207,7 @@ public class SignUpEnseignant extends JPanel {
 		motDePassePanel.add(motDePasseInput);
 		
 		//départements input field
-		String[] departements = { "TRI", "G2E/GI"};
+		String[] departements = { "TRI", "STIN"};
 		departementList = new JComboBox<Object>(departements);
 		departementList.setSelectedIndex(0);
 		departementList.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -214,6 +221,15 @@ public class SignUpEnseignant extends JPanel {
 		signUpButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
+				String name = userNameInput.getText();
+				String email = emailInput.getText();
+				String mdp = motDePasseInput.getText();
+				String dep= departements[departementList.getSelectedIndex()];
+				
+				Enseignant en = new Enseignant(email,mdp,name,0,dep);
+				uc =new UtilisateurController("add",en);
+				
+				
 				cl.show(cards, "home page");
 			}
 		});

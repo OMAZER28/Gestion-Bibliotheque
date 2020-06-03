@@ -29,6 +29,10 @@ import java.awt.font.TextAttribute;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
+import gestionBibliotheque.model.utilisateurs.Bibliothecaire;
+import gestionBibliotheque.controller.UtilisateurController;
+
+
 public class SignUpBibliothecaire extends JPanel {
 	
 	//Components attributes
@@ -64,6 +68,8 @@ public class SignUpBibliothecaire extends JPanel {
 	private GridBagConstraints gbcSignUpLink;
 	private GridBagConstraints gbcHeader;
 	private GridBagConstraints gbcFooter;
+	
+	private UtilisateurController uc;
 	
 	//Sign Up Screen constructor
 	public SignUpBibliothecaire(CardLayout cl, JPanel cards, boolean etdSelected, boolean ensSelected, boolean bibSelected) {
@@ -198,7 +204,7 @@ public class SignUpBibliothecaire extends JPanel {
 		
 		//date de naissance input field
 		dateNaissanceInput = new PlaceholderTextField("");
-		dateNaissanceInput.setPlaceholder("Date de naissance");
+		dateNaissanceInput.setPlaceholder("Date de naissance (AAAA-MM-JJ)");
 		dateNaissanceInput.setColumns(25);
 		dateNaissanceInput.setMargin(new Insets(10, 10, 10, 10));
 		dateNaissanceInput.setForeground(new Color(80, 80, 80));
@@ -209,6 +215,13 @@ public class SignUpBibliothecaire extends JPanel {
 		signUpButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
+				String name = userNameInput.getText();
+				String email = emailInput.getText();
+				String mdp = motDePasseInput.getText();
+				String dn = dateNaissanceInput.getText();
+				Bibliothecaire bib = new Bibliothecaire(0,email,mdp,name,dn);
+				uc =new UtilisateurController("add",bib);
+				
 				cl.show(cards, "home page");
 			}
 		});

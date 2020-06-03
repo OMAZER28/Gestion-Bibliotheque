@@ -10,6 +10,11 @@ public class Utilisateur {
 		this.mdp = mdp;
 		this.nom = nom;
 	}
+	
+	public Utilisateur(String login, String mdp) {
+		this.login = login;
+		this.mdp = mdp;
+	}
 
 	public String getLogin() {
 		return login;

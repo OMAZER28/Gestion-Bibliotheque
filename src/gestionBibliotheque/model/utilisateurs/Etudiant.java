@@ -5,9 +5,9 @@ public class Etudiant extends Adherant {
 	private String adresse;
 	private String filliere;
 	
-	public Etudiant(String login, String mdp, String nom, int numLecteur, int nbMax, String cne, String adresse,
+	public Etudiant(String login, String mdp, String nom, int numLecteur,  String cne, String adresse,
 			String filliere) {
-		super(login, mdp, nom, numLecteur, nbMax);
+		super(login, mdp, nom, numLecteur, 2);
 		this.cne = cne;
 		this.adresse = adresse;
 		this.filliere = filliere;

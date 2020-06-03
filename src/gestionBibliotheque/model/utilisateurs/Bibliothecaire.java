@@ -4,7 +4,7 @@ public class Bibliothecaire extends Utilisateur {
 	private int id;
 	private String dateNaissance;
 	
-	public Bibliothecaire(String login, String mdp, String nom, int id, String dateNaissance) {
+	public Bibliothecaire(int id,String login, String mdp, String nom,  String dateNaissance) {
 		super(login, mdp, nom);
 		this.id = id;
 		this.dateNaissance = dateNaissance;
