@@ -18,7 +18,7 @@ public class AdherantDAO {
 		try {
 			dbprops.load(new FileInputStream("dbprops.properties"));
 		} catch(IOException e) {
-			throw new DAOException("problËme de chargement des informations de la base de donnÈe...", e);
+			throw new DAOException("probl√®me de chargement des informations de la base de donn√©e...", e);
 		}
 		String user, password, dburl;
 		user = dbprops.getProperty("user");
@@ -29,12 +29,33 @@ public class AdherantDAO {
 		try {
 			connection = DriverManager.getConnection(dburl, user, password);
 		} catch(SQLException e) {
-			throw new DAOException("problËme de connexion au base de donnÈe " + dburl + "...", e);
+			throw new DAOException("probl√®me de connexion au base de donn√©e " + dburl + "...", e);
 		}
 		
 		System.out.println("DB connection successful to: " + dburl);
 	}
-	
+	public int getNumLecteurByLogin(String login)throws DAOException {
+		PreparedStatement req = null;
+		String sql;
+		int numLecteur=0;
+		try {
+			
+			sql = "SELECT numLecteur FROM adherant WHERE login=?";
+			req = connection.prepareStatement(sql);
+			req.setString(1, login);
+			ResultSet rs= req.executeQuery();
+			
+			while (rs.next()) {
+				numLecteur = rs.getInt("numLecteur");
+			}
+
+			return numLecteur;		
+		}catch (SQLException e) {
+			throw new DAOException("probl√®me d'obtention de numLecteur ", e);
+		}finally {
+			close(req);
+		}
+	}
 	public Adherant getAdherant(String Login,String Mdp) throws DAOException{
 		PreparedStatement req = null;
 		ResultSet rs = null;
@@ -58,7 +79,7 @@ public class AdherantDAO {
 			return ad;
 			
 		} catch(SQLException e) {
-			throw new DAOException("problËme de verification d'un adherant " + ad.getNom(), e);
+			throw new DAOException("probl√®me de verification d'un adherant " + ad.getNom(), e);
 		}finally {
 			close(req);
 		}
@@ -74,7 +95,7 @@ public class AdherantDAO {
 			req.setString(2, ad.getNom());
 			req.executeUpdate();
 		} catch(SQLException e) {
-			throw new DAOException("problËme de verification d'un adherant " + ad.getNom(), e);
+			throw new DAOException("probl√®me de verification d'un adherant " + ad.getNom(), e);
 		}finally {
 			close(req);
 		}
@@ -91,7 +112,7 @@ public class AdherantDAO {
 			req.setString(3, ad.getMdp());
 			req.executeUpdate();
 		} catch(SQLException e) {
-			throw new DAOException("problËme de suppression d'un adherant " + ad.getNom(), e);
+			throw new DAOException("probl√®me de suppression d'un adherant " + ad.getNom(), e);
 		}finally {
 			close(req);
 		}
@@ -121,7 +142,7 @@ public class AdherantDAO {
 
 			return list;		
 		}catch (SQLException e) {
-			throw new DAOException("problËme d'affichage de la liste des adherants ", e);
+			throw new DAOException("probl√®me d'affichage de la liste des adherants ", e);
 		}finally {
 			close(req, rs);
 		}
