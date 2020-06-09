@@ -1,14 +1,16 @@
 package gestionBibliotheque.view;
 
 import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import gestionBibliotheque.model.utilisateurs.Adherant;
 import gestionBibliotheque.model.utilisateurs.Bibliothecaire;
 import gestionBibliotheque.model.utilisateurs.Utilisateur;
 
@@ -17,39 +19,38 @@ import java.awt.Color;
 import java.awt.BorderLayout;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import java.awt.GridLayout;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-
 public class Home extends JPanel {
-	
-	
-	
-	//Components attributes
 	private static final long serialVersionUID = 1L;
 	private boolean livreRouteActive;
 	private boolean revueRouteActive;
 	private boolean empruntRouteActive;
-	private boolean reservationRouteActive;
-	private boolean gestionRouteActive;
+	private boolean nouveauAdherantRouteActive;
+	private boolean adherantRouteActive;
 	private boolean profileRouteActive;
 	private DocRoute livreRoute;
 	private DocRoute revueRoute;
 	private EmpruntRoute empruntRoute;
-	private ReservationRoute reservationRoute;
-	private GestionRoute gestionRoute;
+	private EmpruntRoute mesEmpruntsRoute;
+	private NouveauAdherantRoute nouveauAdherantRoute;
+	private AdherantRoute adherantRoute;
 	private ProfileRoute profileRoute;
 	private JLabel livre_route;
 	private JLabel revue_route;
 	private JLabel emprunt_route;
-	private JLabel gestion_route;
-	private JLabel reservation_route;
+	private JLabel nouveauAdherant_route;
+	private JLabel adherant_route;
 	private JLabel profil_route;
 	private JPanel menuPanel;
 	private JPanel contentPane;
@@ -59,42 +60,32 @@ public class Home extends JPanel {
 	private JPanel routesPanel_empty_space;
 	private JPanel routesPanel_footer;
 	
-	
-	//Sign In Screen constructor
 	public Home(Utilisateur user, CardLayout cl, JPanel cards) {
 		setLayout(new BorderLayout(0, 0));
-		
-		
-		
 		
 		menuPanel = new JPanel();
 		menuPanel.setLayout(new BorderLayout(0, 0));
 		add(menuPanel, BorderLayout.WEST);
 		
-		
-		
-		
 		livreRoute = new DocRoute(user, "livre");
 		revueRoute = new DocRoute(user, "revue");
-		empruntRoute  = new EmpruntRoute();
-		gestionRoute = new GestionRoute();
-		reservationRoute = new ReservationRoute();
-		profileRoute = new ProfileRoute();
+		empruntRoute  = new EmpruntRoute(user);
+		mesEmpruntsRoute = new EmpruntRoute(user);
+		nouveauAdherantRoute = new NouveauAdherantRoute(user);
+		adherantRoute = new AdherantRoute(user);
+		/*profileRoute = new ProfileRoute();*/
 		contentPane = new JPanel();
 		CardLayout cardlayout = new CardLayout();
 		contentPane.setLayout(cardlayout);
 		contentPane.add(livreRoute, "livre page");
 		contentPane.add(revueRoute, "revue page");
 		contentPane.add(empruntRoute, "emprunt page");
-		contentPane.add(reservationRoute, "reservation page");
-		contentPane.add(gestionRoute, "gestion page");
-		contentPane.add(profileRoute, "profile page");
+		contentPane.add(mesEmpruntsRoute, "mes emprunts page");
+		contentPane.add(nouveauAdherantRoute, "nouveau adherant page");
+		contentPane.add(adherantRoute, "adherant page");
+		/*contentPane.add(profileRoute, "profile page");*/
 		add(contentPane, BorderLayout.CENTER);
 		
-		
-		
-		
-        //logo icon
 		BufferedImage logoImg = null;
 		try {
 			logoImg = ImageIO.read(new File("images/logo.png"));
@@ -104,10 +95,6 @@ public class Home extends JPanel {
 		Image dlogoImg = logoImg.getScaledInstance(45, 45, Image.SCALE_SMOOTH);
 		ImageIcon logoIcon = new ImageIcon(dlogoImg);
 		
-		
-		
-		
-		
 		logoPanel = new JPanel();
 		logoPanel.setBackground(Color.WHITE);
 		logoPanel.setLayout(new FlowLayout());
@@ -115,7 +102,7 @@ public class Home extends JPanel {
 		
 		GridLayout glheader = new GridLayout(3,1);
 		glheader.setVgap(25);
-		GridLayout glfooter = new GridLayout(2,1);
+		GridLayout glfooter = new GridLayout(3,1);
 		glfooter.setVgap(25);
 		
 		routesPanel = new JPanel();
@@ -128,22 +115,15 @@ public class Home extends JPanel {
 		routesPanel.add(routesPanel_header, BorderLayout.NORTH);
 		routesPanel_header.setLayout(glheader);
 		
-		
-		
 		routesPanel_empty_space = new JPanel();
 		routesPanel_empty_space.setBackground(Color.WHITE);
 		routesPanel.add(routesPanel_empty_space, BorderLayout.CENTER);
 
-		
-		
 		routesPanel_footer = new JPanel();
 		routesPanel_footer.setBackground(Color.WHITE);
 		routesPanel.add(routesPanel_footer, BorderLayout.SOUTH);
 		routesPanel_footer.setLayout(glfooter);
-		
-		
-		
-		
+
 		livre_route = new JLabel("Livres");
 		livre_route.addMouseListener(new MouseAdapter() {
 			@Override
@@ -161,30 +141,26 @@ public class Home extends JPanel {
 				cardlayout.show(contentPane, "livre page");
 				setLivreRouteStyle("images/livre_b.png", new Color(0,120,255));
 				setRevueRouteStyle("images/revue_g.png", new Color(73,73,73));
-				setEmpruntRouteStyle("images/emprunt_g.png", new Color(73,73,73));
-				setGestionRouteStyle("images/gestion_g.png", new Color(73,73,73));
-				setProfileRouteStyle("images/user_g.png", new Color(73,73,73));
-				setReservationRouteStyle("images/reservation_g.png", new Color(73,73,73));
+				if(user instanceof Bibliothecaire) 
+					setEmpruntRouteStyle("images/emprunt_g.png", new Color(73,73,73));
+				else
+					setEmpruntRouteStyle("images/reservation_g.png", new Color(73,73,73));
+				setNouveauAdherantRouteStyle("images/gestion_g.png", new Color(73,73,73));
+				setAdherantRouteStyle("images/gestion_g.png", new Color(73,73,73));
+				/*setProfileRouteStyle("images/user_g.png", new Color(73,73,73));*/
 				setRevueRouteActive(false);
 				setEmpruntRouteActive(false);
-				setGestionRouteActive(false);
-				setProfileRouteActive(false);
-				setReservationRouteActive(false);
+				setNouveauAdherantRouteActive(false);
+				setAdherantRouteActive(false);
+				/*setProfileRouteActive(false);*/
 			}
 		});
 		livre_route.setBorder(new EmptyBorder(0,40,10,10));
 		livre_route.setFont(new Font("Titillium Web Light", Font.PLAIN, 18));
 		livre_route.setIconTextGap(20);
 		livre_route.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		setLivreRouteStyle("images/livre_g.png", new Color(73,73,73));
-		
-		
-		
-		
-		
-		
-		
-		
+		setLivreRouteActive(true);
+		setLivreRouteStyle("images/livre_b.png", new Color(0,120,255));
 		
 		revue_route = new JLabel("Revues");
 		revue_route.addMouseListener(new MouseAdapter() {
@@ -203,15 +179,18 @@ public class Home extends JPanel {
 				cardlayout.show(contentPane, "revue page");
 				setRevueRouteStyle("images/revue_b.png", new Color(0,120,255));
 				setLivreRouteStyle("images/livre_g.png", new Color(73,73,73));
-				setEmpruntRouteStyle("images/emprunt_g.png", new Color(73,73,73));
-				setGestionRouteStyle("images/gestion_g.png", new Color(73,73,73));
-				setProfileRouteStyle("images/user_g.png", new Color(73,73,73));
-				setReservationRouteStyle("images/reservation_g.png", new Color(73,73,73));
+				if(user instanceof Bibliothecaire) 
+					setEmpruntRouteStyle("images/emprunt_g.png", new Color(73,73,73));
+				else
+					setEmpruntRouteStyle("images/reservation_g.png", new Color(73,73,73));
+				setNouveauAdherantRouteStyle("images/gestion_g.png", new Color(73,73,73));
+				setAdherantRouteStyle("images/gestion_g.png", new Color(73,73,73));
+				/*setProfileRouteStyle("images/user_g.png", new Color(73,73,73));*/
 				setLivreRouteActive(false);
 				setEmpruntRouteActive(false);
-				setGestionRouteActive(false);
-				setProfileRouteActive(false);
-				setReservationRouteActive(false);
+				setNouveauAdherantRouteActive(false);
+				setAdherantRouteActive(false);
+				/*setProfileRouteActive(false);*/
 			}
 		});
 		revue_route.setBorder(new EmptyBorder(0,40,10,10));
@@ -219,119 +198,143 @@ public class Home extends JPanel {
 		revue_route.setIconTextGap(20);
 		revue_route.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		setRevueRouteStyle("images/revue_g.png", new Color(73,73,73));
-		
-		
-		
-		
-		emprunt_route = new JLabel("Emprunt");
+			
+		if(user instanceof Bibliothecaire) 
+			emprunt_route = new JLabel("Gestion emprunt");
+		else
+			emprunt_route = new JLabel("Mes emprunts");
 		emprunt_route.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				setEmpruntRouteStyle("images/emprunt_b.png", new Color(0,120,255));
+				if(user instanceof Bibliothecaire) 
+					setEmpruntRouteStyle("images/emprunt_b.png", new Color(0,120,255));
+				else
+					setEmpruntRouteStyle("images/reservation_b.png", new Color(0,120,255));
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {
-				if(!isEmpruntRouteActive()) 
-					setEmpruntRouteStyle("images/emprunt_g.png", new Color(73,73,73));
+				if(!isEmpruntRouteActive()) {
+					if(user instanceof Bibliothecaire) 
+						setEmpruntRouteStyle("images/emprunt_g.png", new Color(73,73,73));
+					else
+						setEmpruntRouteStyle("images/reservation_g.png", new Color(73,73,73));
+				}
 			}
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				setEmpruntRouteActive(true);
-				cardlayout.show(contentPane, "emprunt page");
-				setEmpruntRouteStyle("images/emprunt_b.png", new Color(0,120,255));
+				if(user instanceof Bibliothecaire) 
+					cardlayout.show(contentPane, "emprunt page");
+				else
+					cardlayout.show(contentPane, "mes emprunts page");
+				
+				if(user instanceof Bibliothecaire) 
+					setEmpruntRouteStyle("images/emprunt_b.png", new Color(0,120,255));
+				else
+					setEmpruntRouteStyle("images/reservation_b.png", new Color(0,120,255));
 				setLivreRouteStyle("images/livre_g.png", new Color(73,73,73));
 				setRevueRouteStyle("images/revue_g.png", new Color(73,73,73));
-				setGestionRouteStyle("images/gestion_g.png", new Color(73,73,73));
-				setProfileRouteStyle("images/user_g.png", new Color(73,73,73));
+				setNouveauAdherantRouteStyle("images/gestion_g.png", new Color(73,73,73));
+				setAdherantRouteStyle("images/gestion_g.png", new Color(73,73,73));
+				/*setProfileRouteStyle("images/user_g.png", new Color(73,73,73));*/
 				setLivreRouteActive(false);
 				setRevueRouteActive(false);
-				setGestionRouteActive(false);
-				setProfileRouteActive(false);
+				setNouveauAdherantRouteActive(false);
+				setAdherantRouteActive(false);
+				/*setProfileRouteActive(false);*/
 			}
 		});
 		emprunt_route.setBorder(new EmptyBorder(0,40,10,10));
 		emprunt_route.setFont(new Font("Titillium Web Light", Font.PLAIN, 18));	
 		emprunt_route.setIconTextGap(20);
 		emprunt_route.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		setEmpruntRouteStyle("images/emprunt_g.png", new Color(73,73,73));
+		if(user instanceof Bibliothecaire) 
+			setEmpruntRouteStyle("images/emprunt_g.png", new Color(73,73,73));
+		else
+			setEmpruntRouteStyle("images/reservation_g.png", new Color(73,73,73));
 		
-		
-		
-		
-		
-		reservation_route = new JLabel("Mes Réservations");
-		reservation_route.addMouseListener(new MouseAdapter() {
+		nouveauAdherant_route = new JLabel("Nouveau adhérants");
+		nouveauAdherant_route.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				setReservationRouteStyle("images/reservation_b.png", new Color(0,120,255));
+				setNouveauAdherantRouteStyle("images/gestion_b.png", new Color(0,120,255));
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {
-				if(!isReservationRouteActive()) 
-					setReservationRouteStyle("images/reservation_g.png", new Color(73,73,73));
-			}
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				setReservationRouteActive(true);
-				cardlayout.show(contentPane, "reservation page");
-				setReservationRouteStyle("images/reservation_b.png", new Color(0,120,255));
-				setLivreRouteStyle("images/livre_g.png", new Color(73,73,73));
-				setRevueRouteStyle("images/revue_g.png", new Color(73,73,73));
-				setProfileRouteStyle("images/user_g.png", new Color(73,73,73));
-				setLivreRouteActive(false);
-				setRevueRouteActive(false);
-				setProfileRouteActive(false);
-			}
-		});
-		reservation_route.setBorder(new EmptyBorder(0,40,10,10));
-		reservation_route.setFont(new Font("Titillium Web Light", Font.PLAIN, 18));	
-		reservation_route.setIconTextGap(20);
-		reservation_route.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		setReservationRouteStyle("images/reservation_g.png", new Color(73,73,73));
-		
-		
-		
-		
-		
-		
-		gestion_route = new JLabel("Gestion utilisateurs");
-		gestion_route.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				setGestionRouteStyle("images/gestion_b.png", new Color(0,120,255));
-			}
-			@Override
-			public void mouseExited(MouseEvent e) {
-				if(!isGestionRouteActive()) {
-					setGestionRouteStyle("images/gestion_g.png", new Color(73,73,73));
+				if(!isNouveauAdherantRouteActive()) {
+					setNouveauAdherantRouteStyle("images/gestion_g.png", new Color(73,73,73));
 				}
 			}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				setGestionRouteActive(true);
-				cardlayout.show(contentPane, "gestion page");
-				setGestionRouteStyle("images/gestion_b.png", new Color(0,120,255));
+				setNouveauAdherantRouteActive(true);
+				cardlayout.show(contentPane, "nouveau adherant page");
+				setNouveauAdherantRouteStyle("images/gestion_b.png", new Color(0,120,255));
+				setAdherantRouteStyle("images/gestion_g.png", new Color(73,73,73));
 				setLivreRouteStyle("images/livre_g.png", new Color(73,73,73));
 				setRevueRouteStyle("images/revue_g.png", new Color(73,73,73));
-				setEmpruntRouteStyle("images/emprunt_g.png", new Color(73,73,73));
-				setProfileRouteStyle("images/user_g.png", new Color(73,73,73));
+				if(user instanceof Bibliothecaire) 
+					setEmpruntRouteStyle("images/emprunt_g.png", new Color(73,73,73));
+				else
+					setEmpruntRouteStyle("images/reservation_g.png", new Color(73,73,73));
+				/*setProfileRouteStyle("images/user_g.png", new Color(73,73,73));*/
 				setLivreRouteActive(false);
 				setRevueRouteActive(false);
 				setEmpruntRouteActive(false);
-				setProfileRouteActive(false);
+				setAdherantRouteActive(false);
+				/*setProfileRouteActive(false);*/
 			}
 		});
-		gestion_route.setBorder(new EmptyBorder(0,40,10,10));
-		gestion_route.setFont(new Font("Titillium Web Light", Font.PLAIN, 18));
-		gestion_route.setIconTextGap(20);
-		gestion_route.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		setGestionRouteStyle("images/gestion_g.png", new Color(73,73,73));
 		
+		nouveauAdherant_route.setBorder(new EmptyBorder(0,40,10,10));
+		nouveauAdherant_route.setFont(new Font("Titillium Web Light", Font.PLAIN, 18));
+		nouveauAdherant_route.setIconTextGap(20);
+		nouveauAdherant_route.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		setNouveauAdherantRouteStyle("images/gestion_g.png", new Color(73,73,73));
 		
-		
-		
-		
-		profil_route = new JLabel(user.getNom());
+		adherant_route = new JLabel("Adhérants");
+		adherant_route.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				setAdherantRouteStyle("images/gestion_b.png", new Color(0,120,255));
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				if(!isAdherantRouteActive()) {
+					setAdherantRouteStyle("images/gestion_g.png", new Color(73,73,73));
+				}
+			}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				cardlayout.removeLayoutComponent(adherantRoute);
+				adherantRoute = new AdherantRoute(user);
+				contentPane.add(adherantRoute, "adherant page");
+				
+				setAdherantRouteActive(true);
+				cardlayout.show(contentPane, "adherant page");
+				setAdherantRouteStyle("images/gestion_b.png", new Color(0,120,255));
+				setNouveauAdherantRouteStyle("images/gestion_g.png", new Color(73,73,73));
+				setLivreRouteStyle("images/livre_g.png", new Color(73,73,73));
+				setRevueRouteStyle("images/revue_g.png", new Color(73,73,73));
+				if(user instanceof Bibliothecaire) 
+					setEmpruntRouteStyle("images/emprunt_g.png", new Color(73,73,73));
+				else
+					setEmpruntRouteStyle("images/reservation_g.png", new Color(73,73,73));
+				/*setProfileRouteStyle("images/user_g.png", new Color(73,73,73));*/
+				setLivreRouteActive(false);
+				setRevueRouteActive(false);
+				setEmpruntRouteActive(false);
+				setNouveauAdherantRouteActive(false);
+				/*setProfileRouteActive(false);*/
+			}
+		});
+		adherant_route.setBorder(new EmptyBorder(0,40,10,10));
+		adherant_route.setFont(new Font("Titillium Web Light", Font.PLAIN, 18));
+		adherant_route.setIconTextGap(20);
+		adherant_route.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		setAdherantRouteStyle("images/gestion_g.png", new Color(73,73,73));
+
+		/*profil_route = new JLabel("user");
 		profil_route.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -349,53 +352,63 @@ public class Home extends JPanel {
 				setProfileRouteStyle("images/user_b.png", new Color(0,120,255));
 				setLivreRouteStyle("images/livre_g.png", new Color(73,73,73));
 				setRevueRouteStyle("images/revue_g.png", new Color(73,73,73));
-				setEmpruntRouteStyle("images/emprunt_g.png", new Color(73,73,73));
-				setGestionRouteStyle("images/gestion_g.png", new Color(73,73,73));
-				setReservationRouteStyle("images/reservation_g.png", new Color(73,73,73));
+				if(user instanceof Bibliothecaire) 
+					setEmpruntRouteStyle("images/emprunt_g.png", new Color(73,73,73));
+				else
+					setEmpruntRouteStyle("images/reservation_g.png", new Color(73,73,73));
+				setNouveauAdherantRouteStyle("images/gestion_g.png", new Color(73,73,73));
+				setAdherantRouteStyle("images/gestion_g.png", new Color(73,73,73));
 				setLivreRouteActive(false);
 				setRevueRouteActive(false);
 				setEmpruntRouteActive(false);
-				setGestionRouteActive(false);
-				setReservationRouteActive(false);
+				setNouveauAdherantRouteActive(false);
+				setAdherantRouteActive(false);
 			}
 		});
 		profil_route.setBorder(new EmptyBorder(0,40,10,10));
 		profil_route.setFont(new Font("Titillium Web Light", Font.PLAIN, 18));
 		profil_route.setIconTextGap(20);
 		profil_route.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		setProfileRouteStyle("images/user_g.png", new Color(73,73,73));
-		
-		
-		
-		
-		
+		setProfileRouteStyle("images/user_g.png", new Color(73,73,73));*/
+
 		JLabel logoLabel = new JLabel("");
 		logoLabel.setBorder(new EmptyBorder(0,30,10,10));	
 		logoLabel.setIcon(logoIcon);
 		logoPanel.add(logoLabel);
-		
-		
-		
-		
+
 		JLabel logoName = new JLabel("My Biblio");
 		logoName.setFont(new Font("Titillium Web Light", Font.PLAIN, 20));
 		logoName.setForeground(new Color(0,120,255));
 		logoName.setBorder(new EmptyBorder(30,0,40,60));	
 		logoPanel.add(logoName);
-		
-		
-		
-		
+
 		routesPanel_header.add(livre_route);
 		routesPanel_header.add(revue_route);
-		if(user instanceof Adherant) {
-			routesPanel_header.add(reservation_route);
+		routesPanel_header.add(emprunt_route);
+		if(user instanceof Bibliothecaire) {		
+			routesPanel_footer.add(nouveauAdherant_route);
+			routesPanel_footer.add(adherant_route);
 		}
-		else if(user instanceof Bibliothecaire) {
-			routesPanel_header.add(emprunt_route);
-			routesPanel_footer.add(gestion_route);
-		}
-		routesPanel_footer.add(profil_route);
+		JButton btn = new JButton("Déconnecter");
+		btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btn.setPreferredSize(new Dimension(80, 20));
+		btn.setBackground(new Color(255, 100, 20));
+		btn.setForeground(Color.WHITE);
+		Font loginFont = new Font("Calibri", Font.BOLD, 18);
+		btn.setFont(loginFont);
+		btn.setBorder(new EmptyBorder(0, 25, 10, 20));
+		btn.setHorizontalAlignment(SwingConstants.CENTER);
+		btn.setBorder(BorderFactory.createCompoundBorder(
+                new CustomeBorder(1, new Color(255, 100, 20), new Point(5,5)), 
+                new EmptyBorder(new Insets(2, 2, 2, 2))));	
+		btn.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				cl.show(cards, "sign in page");
+			}
+		});
+		routesPanel_footer.add(btn);
+		
 	}
 	
 	public boolean isLivreRouteActive() {
@@ -416,26 +429,24 @@ public class Home extends JPanel {
 	public void setEmpruntRouteActive(boolean empruntRouteActive) {
 		this.empruntRouteActive = empruntRouteActive;
 	}
-	public boolean isReservationRouteActive() {
-		return reservationRouteActive;
+	public boolean isNouveauAdherantRouteActive() {
+		return nouveauAdherantRouteActive;
 	}
-	public void setReservationRouteActive(boolean reservationRouteActive) {
-		this.reservationRouteActive = reservationRouteActive;
+	public void setNouveauAdherantRouteActive(boolean nouveauAdherantRouteActive) {
+		this.nouveauAdherantRouteActive = nouveauAdherantRouteActive;
 	}
-	public boolean isGestionRouteActive() {
-		return gestionRouteActive;
+	public boolean isAdherantRouteActive() {
+		return adherantRouteActive;
 	}
-	public void setGestionRouteActive(boolean gestionRouteActive) {
-		this.gestionRouteActive = gestionRouteActive;
+	public void setAdherantRouteActive(boolean adherantRouteActive) {
+		this.adherantRouteActive = adherantRouteActive;
 	}
-	public boolean isProfileRouteActive() {
+	/*public boolean isProfileRouteActive() {
 		return profileRouteActive;
 	}
 	public void setProfileRouteActive(boolean profileRouteActive) {
 		this.profileRouteActive = profileRouteActive;
-	}
-	
-
+	}*/
 	public void setLivreRouteStyle(String livreRouteImage, Color livreRouteLabelFg) {
 		BufferedImage livreImage = null;
 		try {
@@ -472,31 +483,31 @@ public class Home extends JPanel {
 		emprunt_route.setIcon(empruntIcon);
 		emprunt_route.setForeground(empruntRouteLabelFg);
 	}
-	public void setReservationRouteStyle(String reservationRouteImage, Color reservationRouteLabelFg) {
-		BufferedImage reservationImage = null;
+	public void setNouveauAdherantRouteStyle(String nouveauAdherantRouteImage, Color nouveauAdherantRouteLabelFg) {
+		BufferedImage nouveauAdherantImage = null;
 		try {
-			reservationImage = ImageIO.read(new File(reservationRouteImage));
+			nouveauAdherantImage = ImageIO.read(new File(nouveauAdherantRouteImage));
 		} catch (IOException e) {
 		    e.printStackTrace();
 		}
-		Image dreservationImage = reservationImage.getScaledInstance(30, 30, Image.SCALE_SMOOTH);
-		ImageIcon reservationIcon = new ImageIcon(dreservationImage);
-		reservation_route.setIcon(reservationIcon);
-		reservation_route.setForeground(reservationRouteLabelFg);
+		Image dnouveauAdherantImage = nouveauAdherantImage.getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+		ImageIcon nouveauAdherantIcon = new ImageIcon(dnouveauAdherantImage);
+		nouveauAdherant_route.setIcon(nouveauAdherantIcon);
+		nouveauAdherant_route.setForeground(nouveauAdherantRouteLabelFg);
 	}
-	public void setGestionRouteStyle(String gestionRouteImage, Color gestionRouteLabelFg) {
-		BufferedImage gestionImage = null;
+	public void setAdherantRouteStyle(String adherantRouteImage, Color adherantRouteLabelFg) {
+		BufferedImage adherantImage = null;
 		try {
-			gestionImage = ImageIO.read(new File(gestionRouteImage));
+			adherantImage = ImageIO.read(new File(adherantRouteImage));
 		} catch (IOException e) {
 		    e.printStackTrace();
 		}
-		Image dgestionImage = gestionImage.getScaledInstance(30, 30, Image.SCALE_SMOOTH);
-		ImageIcon gestionIcon = new ImageIcon(dgestionImage);
-		gestion_route.setIcon(gestionIcon);
-		gestion_route.setForeground(gestionRouteLabelFg);
+		Image dadherantImage = adherantImage.getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+		ImageIcon adherantIcon = new ImageIcon(dadherantImage);
+		adherant_route.setIcon(adherantIcon);
+		adherant_route.setForeground(adherantRouteLabelFg);
 	}
-	public void setProfileRouteStyle(String profileRouteImage, Color profileRouteLabelFg) {
+	/*public void setProfileRouteStyle(String profileRouteImage, Color profileRouteLabelFg) {
 		BufferedImage userImage = null;
 		try {
 			userImage = ImageIO.read(new File(profileRouteImage));
@@ -507,5 +518,5 @@ public class Home extends JPanel {
 		ImageIcon userIcon = new ImageIcon(duserImage);
 		profil_route.setIcon(userIcon);
 		profil_route.setForeground(profileRouteLabelFg);
-	}
+	}*/
 }

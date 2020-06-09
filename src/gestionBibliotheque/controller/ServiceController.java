@@ -56,8 +56,16 @@ public class ServiceController {
 				} catch(DAOException ex) {
 					System.out.println(ex);
 				}
-			}
 		}
+		else if(this.getOp() == "add") {
+			try {
+				EmpruntDAO empDAO= new EmpruntDAO();
+				empDAO.addEmprunt(emp);
+				} catch(DAOException ex) {
+					System.out.println(ex);
+				}
+		}
+	}
 	
 	public void executeOp(String op, Reservation res) {
 		if(this.getOp()=="delete") {

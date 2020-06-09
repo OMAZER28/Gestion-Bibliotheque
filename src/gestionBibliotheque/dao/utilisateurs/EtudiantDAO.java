@@ -79,34 +79,25 @@ public class EtudiantDAO {
 		PreparedStatement req1 = null;
 		PreparedStatement req2 = null;
 		PreparedStatement req3 = null;
-		String sql1,sql2,sql3;
+		String sql1,sql3;
+		
 		try {
-			sql1 = "UPDATE adherant SET login = ?, mdp = ?, nom = ? WHERE login=? and mdp=? and nom=?";
+			sql1 = "UPDATE adherant SET login = ?, mdp = ?, nom = ? WHERE numLecteur = ?";
 			req1 = connection.prepareStatement(sql1);
 			req1.setString(1, login);
 			req1.setString(2, mdp);
 			req1.setString(3, nom);
-			req1.setString(4, et.getLogin());
-			req1.setString(5, et.getMdp());
-			req1.setString(6, et.getNom());
+			req1.setInt(4, et.getNumLecteur());
 			req1.executeUpdate();
-			
-			sql2 = "SELECT numLecteur FROM Adherant WHERE login = ? and nom =?";
-			req2 = connection.prepareStatement(sql2);
-			req2.setString(1, login);
-			req2.setString(2, nom);
-			ResultSet rs= req2.executeQuery();
-			int id=0;
-			while (rs.next()) {
-				id= rs.getInt("numLecteur");
-			}
-			sql3 = "UPDATE etudiant SET cne = ?, adresse = ?, fillere = ? WHERE numLecteur=?";
+
+			sql3 = "UPDATE etudiant SET cne = ?, adresse = ?, filliere = ? WHERE numLecteur = ?";
 			req3 = connection.prepareStatement(sql3);
 			req3.setString(1, cne);
 			req3.setString(2, adresse);
 			req3.setString(3, fil);
-			req3.setInt(4, id);
+			req3.setInt(4, et.getNumLecteur());
 			req3.executeUpdate();
+
 		} catch(SQLException e) {
 			throw new DAOException("problème de modification d'un etudiant " + et.getNom(), e);
 		}finally {

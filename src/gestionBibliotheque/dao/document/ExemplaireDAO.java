@@ -71,21 +71,21 @@ public class ExemplaireDAO {
 		}
 	}
 	
-	public static int[] add(int n, int arr[], int x) 
+	public static Integer[] add(int n, Integer arr[], int x) 
     { 
         int i; 
-        int newarr[] = new int[n + 1]; 
+        Integer newarr[] = new Integer[n + 1]; 
         for (i = 0; i < n; i++) 
             newarr[i] = arr[i]; 
         newarr[n] = x; 
         return newarr; 
     } 
 	
-	public int[] getAllCote() throws DAOException {
+	public Integer[] getAllCote() throws DAOException {
 		Statement req = null;
 		ResultSet rs = null;
 		String sql;
-		int[] tab= {};
+		Integer[] tab= {};
 		int i = 0;
 		int cote = 0;
 		try {

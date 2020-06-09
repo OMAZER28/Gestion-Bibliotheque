@@ -26,20 +26,23 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import gestionBibliotheque.controller.DocumentController;
+import gestionBibliotheque.controller.ServiceController;
 import gestionBibliotheque.dao.DAOException;
 import gestionBibliotheque.dao.document.ExemplaireDAO;
 import gestionBibliotheque.dao.document.LivreDAO;
 import gestionBibliotheque.dao.document.RevueDAO;
+import gestionBibliotheque.dao.services.EmpruntDAO;
 import gestionBibliotheque.model.documents.Exemplaire;
 import gestionBibliotheque.model.documents.Livre;
 import gestionBibliotheque.model.documents.Revue;
+import gestionBibliotheque.model.services.Emprunt;
 import gestionBibliotheque.model.utilisateurs.Bibliothecaire;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 
-public class AddDoc extends JFrame {
+public class Add extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private PlaceholderTextField docTitre, 
 								 docNomEditeur, 
@@ -55,7 +58,7 @@ public class AddDoc extends JFrame {
 	private JPanel container, main, footer, header;
 	private JLabel addLabel, formTitre;
 	
-	public AddDoc(String docType, String titre,Bibliothecaire bib,JPanel livres_panel,String mot) {
+	public Add(String docType, String titre,Bibliothecaire bib,JPanel panel,String mot) {
 		this.setTitle(titre);
 		this.setSize(400, 500);
 		this.setLocationRelativeTo(null);
@@ -97,12 +100,35 @@ public class AddDoc extends JFrame {
 		docPeriodicite.setBackground(Color.WHITE);
 		docPeriodicite.setForeground(new Color(0,200,100));
 		
-		Integer[] cote = { 1, 2, 3};
-		docCote = new JComboBox<Object>(cote);
-		docCote.setSelectedIndex(0);
-		docCote.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		docCote.setBackground(Color.WHITE);
-		docCote.setForeground(new Color(0,200,100));
+		docNumLecteur = new PlaceholderTextField("");
+        docNumLecteur.setPlaceholder("Numéro de Lecteur");
+        Font docNumLecteurFont = new Font("Arial", Font.PLAIN, 16);
+        docNumLecteur.setFont(docNumLecteurFont);
+        docNumLecteur.setBackground(new Color(255,255,255));
+        docNumLecteur.setForeground(new Color(50,50,50));
+        docNumLecteur.setBorder(BorderFactory.createCompoundBorder(
+                new CustomeBorder(1, new Color(0,120,255), new Point(15,15)), 
+                new EmptyBorder(new Insets(10, 20, 10, 20))));
+        
+        docDateDebut = new PlaceholderTextField("");
+        docDateDebut.setPlaceholder("Date de début(jour/mois/année)");
+        Font docDateDebutFont = new Font("Arial", Font.PLAIN, 16);
+        docDateDebut.setFont(docDateDebutFont);
+        docDateDebut.setBackground(new Color(255,255,255));
+        docDateDebut.setForeground(new Color(50,50,50));
+        docDateDebut.setBorder(BorderFactory.createCompoundBorder(
+                new CustomeBorder(1, new Color(0,120,255), new Point(15,15)), 
+                new EmptyBorder(new Insets(10, 20, 10, 20))));
+        
+        docDateFin = new PlaceholderTextField("");
+        docDateFin.setPlaceholder("Date fin(jour/mois/année)");
+        Font docDateFinFont = new Font("Arial", Font.PLAIN, 16);
+        docDateFin.setFont(docDateFinFont);
+        docDateFin.setBackground(new Color(255,255,255));
+        docDateFin.setForeground(new Color(50,50,50));
+        docDateFin.setBorder(BorderFactory.createCompoundBorder(
+                new CustomeBorder(1, new Color(0,120,255), new Point(15,15)), 
+                new EmptyBorder(new Insets(10, 20, 10, 20))));
 		
 	
 		try {
@@ -112,12 +138,15 @@ public class AddDoc extends JFrame {
 			docSelectTitre.setSelectedIndex(0);
 			docSelectTitre.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			docSelectTitre.setBackground(Color.WHITE);
-			docSelectTitre.setForeground(new Color(0,200,100));
-
-		
-		//String[] ListTitre = { "titre1", "titre2"};
-		
-		
+			docSelectTitre.setForeground(new Color(0,200,100));	
+			
+			ExemplaireDAO exDAO = new ExemplaireDAO();
+			Integer cote[] = exDAO.getAllCote();
+			docCote = new JComboBox<Object>(cote);
+			docCote.setSelectedIndex(0);
+			docCote.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+			docCote.setBackground(Color.WHITE);
+			docCote.setForeground(new Color(0,200,100));
 		
 		addLabel = new JLabel("");
         BufferedImage addImg = null;
@@ -136,15 +165,16 @@ public class AddDoc extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				if(docType =="livre") {
 					Livre l = new Livre(0,docTitre.getText(),docNomEditeur.getText(),docAuteur.getText());
+					@SuppressWarnings("unused")
 					DocumentController dCtrl = new DocumentController("add",l);
 					JOptionPane.showMessageDialog(addLabel, "Ce livre a été ajouté avec succès!",  
                             "Ajout avec succès",  
                             JOptionPane.INFORMATION_MESSAGE);
 					dispose();
-					livres_panel.removeAll();
-	                livres_panel.getGraphics().clearRect(0, 0, livres_panel.getWidth(), livres_panel.getHeight());
-	                livres_panel.revalidate();
-	                livres_panel.repaint();
+					panel.removeAll();
+	                panel.getGraphics().clearRect(0, 0, panel.getWidth(), panel.getHeight());
+	                panel.revalidate();
+	                panel.repaint();
 	                if(mot=="") {
 						try {
 							ExemplaireDAO exempDAO = new ExemplaireDAO();
@@ -152,12 +182,12 @@ public class AddDoc extends JFrame {
 							for( int i=0; i<obj.size();i++) {
 								Object[] o =(Object[]) obj.get(i);
 	            				if(i%2==1) {
-	            					livres_panel.setPreferredSize(new Dimension(0,((i+1)*300/2+(i+1)*150/2)));
+	            					panel.setPreferredSize(new Dimension(0,((i+1)*300/2+(i+1)*150/2)));
 	            				}
 	            				if(i%2==0) {
-	            					livres_panel.setPreferredSize(new Dimension(0,((i+2)*300/2+(i+2)*150/2)));
+	            					panel.setPreferredSize(new Dimension(0,((i+2)*300/2+(i+2)*150/2)));
 	            				}
-								livres_panel.add(new DocComponent(bib,"livre",(int)o[0], (String)o[1], (String)o[2], (String)o[3], (String)o[4], (String)o[5],0,"","",livres_panel,mot,0,"","",0));
+								panel.add(new DocComponent(bib,"livre",(int)o[0], (String)o[1], (String)o[2], (String)o[3], (String)o[4], (String)o[5],0,"","",panel,mot));
 							}
 							
 						
@@ -172,12 +202,12 @@ public class AddDoc extends JFrame {
 	                			for( int i=0; i<obj.size();i++) {
 	                				Object[] o =(Object[]) obj.get(i);
 	                				if(i%2==1) {
-	                					livres_panel.setPreferredSize(new Dimension(0,((i+1)*300/2+(i+1)*150/2)));
+	                					panel.setPreferredSize(new Dimension(0,((i+1)*300/2+(i+1)*150/2)));
 	                				}
 	                				if(i%2==0) {
-	                					livres_panel.setPreferredSize(new Dimension(0,((i+2)*300/2+(i+2)*150/2)));
+	                					panel.setPreferredSize(new Dimension(0,((i+2)*300/2+(i+2)*150/2)));
 	                				}
-	                				livres_panel.add(new DocComponent(bib,"livre",(int)o[0], (String)o[1], (String)o[2], (String)o[3], (String)o[4], (String)o[5],0,"","",livres_panel,mot,0,"","",0));
+	                				panel.add(new DocComponent(bib,"livre",(int)o[0], (String)o[1], (String)o[2], (String)o[3], (String)o[4], (String)o[5],0,"","",panel,mot));
 	                			}
 	                			
 	                		
@@ -197,15 +227,16 @@ public class AddDoc extends JFrame {
 						System.out.println(ex);
 					}
 					Exemplaire exemp = new Exemplaire(0,et,id);
+					@SuppressWarnings("unused")
 					DocumentController dCtrl = new DocumentController("add",exemp);
 					JOptionPane.showMessageDialog(addLabel, "Cet exemplaire a été ajouté avec succès!",  
                             "Ajout avec succès",  
                             JOptionPane.INFORMATION_MESSAGE);
 					dispose();
-					livres_panel.removeAll();
-	                livres_panel.getGraphics().clearRect(0, 0, livres_panel.getWidth(), livres_panel.getHeight());
-	                livres_panel.revalidate();
-	                livres_panel.repaint();
+					panel.removeAll();
+	                panel.getGraphics().clearRect(0, 0, panel.getWidth(), panel.getHeight());
+	                panel.revalidate();
+	                panel.repaint();
 	                if(mot=="") {
 						try {
 							ExemplaireDAO exempDAO = new ExemplaireDAO();
@@ -213,12 +244,12 @@ public class AddDoc extends JFrame {
 							for( int i=0; i<obj.size();i++) {
 								Object[] o =(Object[]) obj.get(i);
 	            				if(i%2==1) {
-	            					livres_panel.setPreferredSize(new Dimension(0,((i+1)*300/2+(i+1)*150/2)));
+	            					panel.setPreferredSize(new Dimension(0,((i+1)*300/2+(i+1)*150/2)));
 	            				}
 	            				if(i%2==0) {
-	            					livres_panel.setPreferredSize(new Dimension(0,((i+2)*300/2+(i+2)*150/2)));
+	            					panel.setPreferredSize(new Dimension(0,((i+2)*300/2+(i+2)*150/2)));
 	            				}
-								livres_panel.add(new DocComponent(bib,"livre",(int)o[0], (String)o[1], (String)o[2], (String)o[3], (String)o[4], (String)o[5],0,"","",livres_panel,mot,0,"","",0));
+								panel.add(new DocComponent(bib,"livre",(int)o[0], (String)o[1], (String)o[2], (String)o[3], (String)o[4], (String)o[5],0,"","",panel,mot));
 							}
 							
 						
@@ -233,12 +264,12 @@ public class AddDoc extends JFrame {
 	                			for( int i=0; i<obj.size();i++) {
 	                				Object[] o =(Object[]) obj.get(i);
 	                				if(i%2==1) {
-	                					livres_panel.setPreferredSize(new Dimension(0,((i+1)*300/2+(i+1)*150/2)));
+	                					panel.setPreferredSize(new Dimension(0,((i+1)*300/2+(i+1)*150/2)));
 	                				}
 	                				if(i%2==0) {
-	                					livres_panel.setPreferredSize(new Dimension(0,((i+2)*300/2+(i+2)*150/2)));
+	                					panel.setPreferredSize(new Dimension(0,((i+2)*300/2+(i+2)*150/2)));
 	                				}
-	                				livres_panel.add(new DocComponent(bib,"livre",(int)o[0], (String)o[1], (String)o[2], (String)o[3], (String)o[4], (String)o[5],0,"","",livres_panel,mot,0,"","",0));
+	                				panel.add(new DocComponent(bib,"livre",(int)o[0], (String)o[1], (String)o[2], (String)o[3], (String)o[4], (String)o[5],0,"","",panel,mot));
 	                			}
 	                			
 	                		
@@ -248,22 +279,23 @@ public class AddDoc extends JFrame {
 	                }
 				}else if(docType == "revue") {
 					Revue r = new Revue(0,docTitre.getText(),periodicite[docPeriodicite.getSelectedIndex()],docDateDeParution.getText());
+					@SuppressWarnings("unused")
 					DocumentController dCtrl = new DocumentController("add",r);
 					JOptionPane.showMessageDialog(addLabel, "Cette revue a été ajoutée avec succès!",  
                             "Ajout avec succès",  
                             JOptionPane.INFORMATION_MESSAGE);
 					dispose();
-					livres_panel.removeAll();
-	                livres_panel.getGraphics().clearRect(0, 0, livres_panel.getWidth(), livres_panel.getHeight());
-	                livres_panel.revalidate();
-	                livres_panel.repaint();
+					panel.removeAll();
+	                panel.getGraphics().clearRect(0, 0, panel.getWidth(), panel.getHeight());
+	                panel.revalidate();
+	                panel.repaint();
 	                if(mot=="") {
 						try {
 							RevueDAO revueDAO = new RevueDAO();
 							List<Revue> obj = revueDAO.getAllRevue();
 							for( int i=0; i<obj.size();i++) {
 								Revue o = obj.get(i);
-								livres_panel.add(new DocComponent(bib,"revue",0,o.getTitre(),"","","","",o.getId(),o.getPeriodicite(),o.getDateParution(),livres_panel,mot,0,"","",0));									}
+								panel.add(new DocComponent(bib,"revue",0,o.getTitre(),"","","","",o.getId(),o.getPeriodicite(),o.getDateParution(),panel,mot));									}
 						}catch(DAOException ex) {
 							System.out.println(ex);
 						}
@@ -274,11 +306,53 @@ public class AddDoc extends JFrame {
 							List<Revue> obj = revueDAO.searchRevue(mot);
 							for( int i=0; i<obj.size();i++) {
 								Revue o = obj.get(i);
-								livres_panel.add(new DocComponent(bib,"revue",0,o.getTitre(),"","","","",o.getId(),o.getPeriodicite(),o.getDateParution(),livres_panel,mot,0,"","",0));									}
+								panel.add(new DocComponent(bib,"revue",0,o.getTitre(),"","","","",o.getId(),o.getPeriodicite(),o.getDateParution(),panel,mot));									}
 						}catch(DAOException ex) {
 							System.out.println(ex);
 						}
 	                }
+				}else if(docType == "emprunt") {
+					
+					Emprunt emp = new Emprunt(Integer.parseInt(docNumLecteur.getText()), cote[docCote.getSelectedIndex()], docDateDebut.getText(), docDateFin.getText(), bib.getId());
+						
+					try {
+						
+						EmpruntDAO empDAO= new EmpruntDAO();
+					
+						if(empDAO.addEmprunt(emp)) {
+							JOptionPane.showMessageDialog(addLabel, "Cette emprunt a été ajouté avec succès!",  
+		                            "Ajout avec succès",  
+		                            JOptionPane.INFORMATION_MESSAGE);
+							dispose();
+						}else {
+							JOptionPane.showMessageDialog(addLabel, "Cette emprunt est impossible!",  
+		                            "Erreur d'ajout",  
+		                            JOptionPane.INFORMATION_MESSAGE);
+							}
+						} catch(DAOException ex) {
+							System.out.println(ex);
+					}
+					
+					panel.removeAll();
+	                panel.getGraphics().clearRect(0, 0, panel.getWidth(), panel.getHeight());
+	                panel.revalidate();
+	                panel.repaint();
+	                try {
+	    				EmpruntDAO empDAO = new EmpruntDAO();
+	    				List<Object> obj = empDAO.getAllEmprunt();
+	    				for( int i=0; i<obj.size();i++) {
+	    					Object[] o =(Object[]) obj.get(i);
+	        				if(i%2==1) {
+	        					panel.setPreferredSize(new Dimension(0,((i+1)*300/2+(i+1)*150/2)));
+	        				}
+	        				if(i%2==0) {
+	        					panel.setPreferredSize(new Dimension(0,((i+2)*300/2+(i+2)*150/2)));
+	        				}
+	        				panel.add(new EmpruntComponent(bib,(int)o[0], (int)o[1], (String)o[2], (String)o[3], (int)o[4], panel));
+	    				}	
+	    			}catch(DAOException ex) {
+	    				System.out.println(ex);
+	    			}
 				}
 			}
 		});
@@ -314,36 +388,6 @@ public class AddDoc extends JFrame {
         docAuteur.setBackground(new Color(255,255,255));
         docAuteur.setForeground(new Color(50,50,50));
         docAuteur.setBorder(BorderFactory.createCompoundBorder(
-                new CustomeBorder(1, new Color(0,120,255), new Point(15,15)), 
-                new EmptyBorder(new Insets(10, 20, 10, 20))));
-        
-        docNumLecteur = new PlaceholderTextField("");
-        docNumLecteur.setPlaceholder("Numéro de Lecteur");
-        Font docNumLecteurFont = new Font("Arial", Font.PLAIN, 16);
-        docNumLecteur.setFont(docNumLecteurFont);
-        docNumLecteur.setBackground(new Color(255,255,255));
-        docNumLecteur.setForeground(new Color(50,50,50));
-        docNumLecteur.setBorder(BorderFactory.createCompoundBorder(
-                new CustomeBorder(1, new Color(0,120,255), new Point(15,15)), 
-                new EmptyBorder(new Insets(10, 20, 10, 20))));
-        
-        docDateDebut = new PlaceholderTextField("");
-        docDateDebut.setPlaceholder("Date de début (yyyy-MM-dd)");
-        Font docDateDebutFont = new Font("Arial", Font.PLAIN, 16);
-        docDateDebut.setFont(docDateDebutFont);
-        docDateDebut.setBackground(new Color(255,255,255));
-        docDateDebut.setForeground(new Color(50,50,50));
-        docDateDebut.setBorder(BorderFactory.createCompoundBorder(
-                new CustomeBorder(1, new Color(0,120,255), new Point(15,15)), 
-                new EmptyBorder(new Insets(10, 20, 10, 20))));
-        
-        docDateFin = new PlaceholderTextField("");
-        docDateFin.setPlaceholder("Date fin (yyyy-MM-dd)");
-        Font docDateFinFont = new Font("Arial", Font.PLAIN, 16);
-        docDateFin.setFont(docDateFinFont);
-        docDateFin.setBackground(new Color(255,255,255));
-        docDateFin.setForeground(new Color(50,50,50));
-        docDateFin.setBorder(BorderFactory.createCompoundBorder(
                 new CustomeBorder(1, new Color(0,120,255), new Point(15,15)), 
                 new EmptyBorder(new Insets(10, 20, 10, 20))));
         

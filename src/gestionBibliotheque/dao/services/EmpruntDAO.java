@@ -8,8 +8,6 @@ import java.io.*;
 
 import gestionBibliotheque.dao.DAOException;
 import gestionBibliotheque.model.services.Emprunt;
-import gestionBibliotheque.model.utilisateurs.Etudiant;
-
 
 
 public class EmpruntDAO {
@@ -40,7 +38,7 @@ public class EmpruntDAO {
 	}
 	
 	
-	public List<Object> getAllEmprunt(String numLecteur) throws DAOException {
+	public List<Object> getAllEmprunt(int nL) throws DAOException {
 		List<Object> list = new ArrayList<Object>();
 		
 		PreparedStatement req = null;
@@ -55,16 +53,17 @@ public class EmpruntDAO {
 			sql = "SELECT *,DATEDIFF(dateFin, ?) AS delai FROM emprunt WHERE numLecteur=?";
 			req = connection.prepareStatement(sql);
 			req.setString(1, date);
-			req.setString(2, numLecteur);
+			req.setInt(2, nL);
 			ResultSet rs= req.executeQuery();
 			
 			while (rs.next()) {
 				int cote = rs.getInt("cote");
+				int numLecteur  = rs.getInt("numLecteur");
 				String dateDebut = rs.getString("dateDebut");
 				String dateFin = rs.getString("dateFin");
-				String delai = rs.getString("delai");
+				int delai = rs.getInt("delai");
 				
-				list.add(new Object[] {cote,dateDebut,dateFin,delai});
+				list.add(new Object[] {cote,numLecteur,dateDebut,dateFin,delai});
 			}
 
 			return list;		
@@ -86,7 +85,7 @@ public class EmpruntDAO {
 		String date=dateFormat.format(cal.getTime());
 		try {
 			
-			sql = "SELECT *,DATEDIFF(dateFin, ?) AS delai FROM emprunt group by numLecteur";
+			sql = "SELECT *,DATEDIFF(dateFin, ?) AS delai FROM emprunt";
 			req = connection.prepareStatement(sql);
 			req.setString(1, date);
 			ResultSet rs= req.executeQuery();
@@ -96,7 +95,7 @@ public class EmpruntDAO {
 				int cote = rs.getInt("cote");
 				String dateDebut = rs.getString("dateDebut");
 				String dateFin = rs.getString("dateFin");
-				String delai = rs.getString("delai");
+				int delai = rs.getInt("delai");
 				
 				list.add(new Object[] {numLecteur,cote,dateDebut,dateFin,delai});
 			}
@@ -114,11 +113,21 @@ public class EmpruntDAO {
 		PreparedStatement req2 = null;
 		PreparedStatement req3 = null;
 		PreparedStatement req4 = null;
+		
 		String sql1,sql2,sql3,sql4;
 		int nbEmp = 0;
 		int n = 0;
 		int nRes= 0;
 		try {
+			sql4 = "SELECT COUNT(*) as nRes FROM reservation WHERE numLecteur=? and cote=?";
+			req4 = connection.prepareStatement(sql4);
+			req4.setInt(1, emp.getNumLecteur());
+			req4.setInt(2, emp.getCote());
+			ResultSet rs4= req4.executeQuery();
+			while (rs4.next()) {
+				nRes= rs4.getInt("nRes");
+			}
+			
 			sql1 = "SELECT COUNT(*) as nbEmp FROM emprunt WHERE numLecteur = ?";
 			req1 = connection.prepareStatement(sql1);
 			req1.setInt(1, emp.getNumLecteur());
@@ -126,7 +135,6 @@ public class EmpruntDAO {
 			while (rs1.next()) {
 				nbEmp= rs1.getInt("nbEmp");
 			}
-			
 			sql2 = "SELECT COUNT(*) as n FROM reservation WHERE cote=?";
 			req2 = connection.prepareStatement(sql2);
 			req2.setInt(1, emp.getCote());
@@ -135,14 +143,6 @@ public class EmpruntDAO {
 				n= rs2.getInt("n");
 			}
 			
-			sql4 = "SELECT COUNT(*) as nRes FROM reservation WHERE numLecteur=? and cote=?";
-			req4 = connection.prepareStatement(sql2);
-			req4.setInt(1, emp.getNumLecteur());
-			req4.setInt(2, emp.getCote());
-			ResultSet rs4= req4.executeQuery();
-			while (rs4.next()) {
-				nRes= rs4.getInt("n");
-			}
 			if((nbEmp<5 && n==0) || (n==1 && nRes==1 && nbEmp<5)) {
 				sql3 = "INSERT INTO emprunt(numLecteur, cote, dateDebut, dateFin,idBibliothecaire) VALUES (?, ?, ?, ?, ?)";
 				req3 = connection.prepareStatement(sql3);
@@ -211,6 +211,7 @@ public class EmpruntDAO {
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private void close(Statement myStmt, ResultSet myRs) throws DAOException {
 		close(null, myStmt, myRs);		
 	}

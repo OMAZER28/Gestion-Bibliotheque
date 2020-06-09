@@ -78,24 +78,24 @@ public class EnseignantDAO {
 		PreparedStatement req1 = null;
 		PreparedStatement req2 = null;
 		PreparedStatement req3 = null;
+		
 		String sql1,sql2,sql3;
+		int id=0;
 		try {
-			sql1 = "UPDATE adherant SET login = ?, mdp = ?, nom = ? WHERE login=? and mdp=? and nom=?";
+			sql1 = "UPDATE adherant SET login = ?, mdp = ?, nom = ? WHERE login=? and nom=?";
 			req1 = connection.prepareStatement(sql1);
 			req1.setString(1, login);
 			req1.setString(2, mdp);
 			req1.setString(3, nom);
 			req1.setString(4, en.getLogin());
-			req1.setString(5, en.getMdp());
-			req1.setString(6, en.getNom());
+			req1.setString(5, en.getNom());
 			req1.executeUpdate();
-			
 			sql2 = "SELECT numLecteur FROM Adherant WHERE login = ? and nom =?";
 			req2 = connection.prepareStatement(sql2);
 			req2.setString(1, login);
 			req2.setString(2, nom);
 			ResultSet rs= req2.executeQuery();
-			int id=0;
+			
 			while (rs.next()) {
 				id= rs.getInt("numLecteur");
 			}
@@ -111,6 +111,7 @@ public class EnseignantDAO {
 			close(req2);
 			close(req3);
 		}
+		System.out.println(req1);
 	}
 	
 	

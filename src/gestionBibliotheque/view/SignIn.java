@@ -185,6 +185,8 @@ public class SignIn extends JPanel {
 							homePage = new Home(user, cl, cards);
 					        cards.add(homePage, "home page");
 					        cl.show(cards, "home page");
+					        emailInput.setText("");
+					        motDePasseInput.setText("");
 							}
 					
 						else if(userDAO.signin(user) == "bibliothecaire") {
@@ -192,6 +194,8 @@ public class SignIn extends JPanel {
 							homePage = new Home(user, cl, cards);
 					        cards.add(homePage, "home page");
 					        cl.show(cards, "home page");
+					        emailInput.setText("");
+					        motDePasseInput.setText("");
 						}else {
 							JOptionPane.showMessageDialog(signInButton, "Les données saisies sont incorrectes!!",  
 		                            "Erreur de connexion",  

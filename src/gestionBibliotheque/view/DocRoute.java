@@ -20,7 +20,6 @@ import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
@@ -31,25 +30,19 @@ import gestionBibliotheque.dao.DAOException;
 import gestionBibliotheque.dao.document.ExemplaireDAO;
 import gestionBibliotheque.dao.document.RevueDAO;
 import gestionBibliotheque.model.documents.Revue;
-import gestionBibliotheque.model.utilisateurs.Adherant;
 import gestionBibliotheque.model.utilisateurs.Bibliothecaire;
 import gestionBibliotheque.model.utilisateurs.Utilisateur;
 
 public class DocRoute extends JPanel {
-
-	//Components
 	private static final long serialVersionUID = 1L;
 	private JPanel recherche_panel;
-	private JPanel livres_panel;
+	private JPanel doc_panel;
 	private JPanel ajouterDoc_panel;
 	private PlaceholderTextField recherche_field;
 	private JLabel addLabel, addExLabel;
 	private JScrollPane scrollPane;
-	
-	//informations
 	private Utilisateur user;
 	private String docType;
-
 
 	public DocRoute(Utilisateur user, String docType) {
 		
@@ -60,12 +53,11 @@ public class DocRoute extends JPanel {
 		recherche_panel.setBorder(new EmptyBorder(10,10,10,10));
 		recherche_panel.setBackground(Color.WHITE);
 		
-		livres_panel = new JPanel();
-		livres_panel.setLayout(new FlowLayout(FlowLayout.CENTER, 35,35));
-		livres_panel.setBackground(Color.WHITE);
+		doc_panel = new JPanel();
+		doc_panel.setLayout(new FlowLayout(FlowLayout.CENTER, 35,35));
+		doc_panel.setBackground(Color.WHITE);
 		
-		scrollPane = new JScrollPane(livres_panel);
-		//livres_panel.setPreferredSize(new Dimension(0,(24*300+24*35)));
+		scrollPane = new JScrollPane(doc_panel);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
@@ -76,12 +68,12 @@ public class DocRoute extends JPanel {
 				for( int i=0; i<obj.size();i++) {
 					Object[] o =(Object[]) obj.get(i);
     				if(i%2==1) {
-    					livres_panel.setPreferredSize(new Dimension(0,((i+1)*300/2+(i+1)*150/2)));
+    					doc_panel.setPreferredSize(new Dimension(0,((i+1)*300/2+(i+1)*150/2)));
     				}
     				if(i%2==0) {
-    					livres_panel.setPreferredSize(new Dimension(0,((i+2)*300/2+(i+2)*150/2)));
+    					doc_panel.setPreferredSize(new Dimension(0,((i+2)*300/2+(i+2)*150/2)));
     				}
-					livres_panel.add(new DocComponent(user,"livre",(int)o[0], (String)o[1], (String)o[2], (String)o[3], (String)o[4], (String)o[5],0,"","",livres_panel,"",0,"","",0));
+    				doc_panel.add(new DocComponent(user,"livre",(int)o[0], (String)o[1], (String)o[2], (String)o[3], (String)o[4], (String)o[5],0,"","",doc_panel,""));
 				}
 				
 			
@@ -95,12 +87,12 @@ public class DocRoute extends JPanel {
 				for( int i=0; i<rv.size();i++) {
 					Revue o =rv.get(i);
     				if(i%2==1) {
-    					livres_panel.setPreferredSize(new Dimension(0,((i+1)*300/2+(i+1)*150/2)));
+    					doc_panel.setPreferredSize(new Dimension(0,((i+1)*300/2+(i+1)*150/2)));
     				}
     				if(i%2==0) {
-    					livres_panel.setPreferredSize(new Dimension(0,((i+2)*300/2+(i+2)*150/2)));
+    					doc_panel.setPreferredSize(new Dimension(0,((i+2)*300/2+(i+2)*150/2)));
     				}
-					livres_panel.add(new DocComponent(user,"revue",0,o.getTitre(),"","","","",o.getId(),o.getPeriodicite(),o.getDateParution(),livres_panel,"",0,"","",0));
+					doc_panel.add(new DocComponent(user,"revue",0,o.getTitre(),"","","","",o.getId(),o.getPeriodicite(),o.getDateParution(),doc_panel,""));
 				}
 				
 			
@@ -108,11 +100,6 @@ public class DocRoute extends JPanel {
 				System.out.println(ex);
 			}
 		}
-		
-		
-		
-		
-		
         DocumentListener dl = new DocumentListener() {
 
             @Override
@@ -132,10 +119,10 @@ public class DocRoute extends JPanel {
 
             protected void updateFieldState() {
                 String text = recherche_field.getText();
-                livres_panel.removeAll();
-                livres_panel.getGraphics().clearRect(0, 0, livres_panel.getWidth(), livres_panel.getHeight());
-                livres_panel.revalidate();
-                livres_panel.repaint();
+                doc_panel.removeAll();
+                doc_panel.getGraphics().clearRect(0, 0, doc_panel.getWidth(), doc_panel.getHeight());
+                doc_panel.revalidate();
+                doc_panel.repaint();
                 if(docType=="livre") {
                 	try {
             			ExemplaireDAO exempDAO = new ExemplaireDAO();
@@ -143,12 +130,12 @@ public class DocRoute extends JPanel {
             			for( int i=0; i<obj.size();i++) {
             				Object[] o =(Object[]) obj.get(i);
             				if(i%2==1) {
-            					livres_panel.setPreferredSize(new Dimension(0,((i+1)*300/2+(i+1)*150/2)));
+            					doc_panel.setPreferredSize(new Dimension(0,((i+1)*300/2+(i+1)*150/2)));
             				}
             				if(i%2==0) {
-            					livres_panel.setPreferredSize(new Dimension(0,((i+2)*300/2+(i+2)*150/2)));
+            					doc_panel.setPreferredSize(new Dimension(0,((i+2)*300/2+(i+2)*150/2)));
             				}
-            				livres_panel.add(new DocComponent(user,"livre",(int)o[0], (String)o[1], (String)o[2], (String)o[3], (String)o[4], (String)o[5],0,"","",livres_panel,text,0,"","",0));
+            				doc_panel.add(new DocComponent(user,"livre",(int)o[0], (String)o[1], (String)o[2], (String)o[3], (String)o[4], (String)o[5],0,"","",doc_panel,text));
             			}
             			
             		
@@ -163,12 +150,12 @@ public class DocRoute extends JPanel {
         				for( int i=0; i<rv.size();i++) {
         					Revue o =rv.get(i);
             				if(i%2==1) {
-            					livres_panel.setPreferredSize(new Dimension(0,((i+1)*300/2+(i+1)*150/2)));
+            					doc_panel.setPreferredSize(new Dimension(0,((i+1)*300/2+(i+1)*150/2)));
             				}
             				if(i%2==0) {
-            					livres_panel.setPreferredSize(new Dimension(0,((i+2)*300/2+(i+2)*150/2)));
+            					doc_panel.setPreferredSize(new Dimension(0,((i+2)*300/2+(i+2)*150/2)));
             				}
-        					livres_panel.add(new DocComponent(user,"revue",0,o.getTitre(),"","","","",o.getId(),o.getPeriodicite(),o.getDateParution(),livres_panel,text,0,"","",0));
+        					doc_panel.add(new DocComponent(user,"revue",0,o.getTitre(),"","","","",o.getId(),o.getPeriodicite(),o.getDateParution(),doc_panel,text));
         				}
         			}catch(DAOException ex) {
         				System.out.println(ex);
@@ -186,8 +173,7 @@ public class DocRoute extends JPanel {
 		else {
 			recherche_field.setPlaceholder("Rechercher une revue par titre");
 		}
-        
-		
+     	
 		Font fieldFont = new Font("Arial", Font.PLAIN, 16);
         recherche_field.setFont(fieldFont);
         recherche_field.setBackground(new Color(255,255,255));
@@ -219,7 +205,7 @@ public class DocRoute extends JPanel {
 	        addLabel.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					AddDoc frame = new AddDoc(docType, "Ajouter une revue",(Bibliothecaire) user,livres_panel,recherche_field.getText());
+					Add frame = new Add(docType, "Ajouter une revue",(Bibliothecaire) user,doc_panel,recherche_field.getText());
 					frame.setVisible(true);
 				}
 			});
@@ -242,7 +228,7 @@ public class DocRoute extends JPanel {
 			addExLabel.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					AddDoc frame = new AddDoc("exemplaire", "Ajouter un exemplaire",(Bibliothecaire) user,livres_panel,recherche_field.getText());
+					Add frame = new Add("exemplaire", "Ajouter un exemplaire",(Bibliothecaire) user,doc_panel,recherche_field.getText());
 					frame.setVisible(true);
 				}
 			});
@@ -261,7 +247,7 @@ public class DocRoute extends JPanel {
 	        addLabel.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					AddDoc frame = new AddDoc(docType, "Ajouter un livre",(Bibliothecaire) user,livres_panel,recherche_field.getText());
+					Add frame = new Add(docType, "Ajouter un livre",(Bibliothecaire) user,doc_panel,recherche_field.getText());
 					frame.setVisible(true);
 				}
 			});
@@ -273,5 +259,23 @@ public class DocRoute extends JPanel {
         if(user instanceof Bibliothecaire) {
         	this.add(ajouterDoc_panel, BorderLayout.SOUTH);
         }
+	}
+	public Utilisateur getUser() {
+		return user;
+	}
+
+
+	public void setUser(Utilisateur user) {
+		this.user = user;
+	}
+
+
+	public String getDocType() {
+		return docType;
+	}
+
+
+	public void setDocType(String docType) {
+		this.docType = docType;
 	}
 }

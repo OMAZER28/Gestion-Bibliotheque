@@ -8,6 +8,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.image.BufferedImage;
@@ -21,6 +22,7 @@ import java.awt.Cursor;
 import java.awt.FlowLayout;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JButton;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
@@ -221,8 +223,15 @@ public class SignUpBibliothecaire extends JPanel {
 				String dn = dateNaissanceInput.getText();
 				Bibliothecaire bib = new Bibliothecaire(0,email,mdp,name,dn);
 				uc =new UtilisateurController("add",bib);
-				
-				cl.show(cards, "home page");
+				JOptionPane.showMessageDialog(signUpButton, "Vous avez Ã©tÃ© inscrit avec succÃ¨s!",  
+				"Message",  
+				JOptionPane.INFORMATION_MESSAGE);
+				cl.show(cards, "sign in page");
+
+				userNameInput.setText("");
+				emailInput.setText("");
+				motDePasseInput.setText("");
+				dateNaissanceInput.setText("");
 			}
 		});
 		signUpButton.setFont(new Font("Century Gothic", Font.BOLD, 14));
@@ -234,7 +243,7 @@ public class SignUpBibliothecaire extends JPanel {
 		signUpButtonPanel.add(signUpButton);
 		
 		//sign up link label
-		signUpLinkLabel = new JLabel("Vous avez déjà un compte ? Se connecter");
+		signUpLinkLabel = new JLabel("Vous avez dï¿½jï¿½ un compte ? Se connecter");
 		signUpLinkLabel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {

@@ -26,6 +26,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 
@@ -163,7 +164,7 @@ public class SignUpEtudiant extends JPanel {
         gbcAdresse.gridy = 7;
         contentPane.add(adressePanel, gbcAdresse);
         
-        //fillière Panel
+        //filliï¿½re Panel
         fillierePanel = new JPanel();
         gbcFilliere.gridx = 0;
         gbcFilliere.gridy = 8;
@@ -244,7 +245,7 @@ public class SignUpEtudiant extends JPanel {
 		adresseInput.setForeground(new Color(80, 80, 80));
 		adressePanel.add(adresseInput);
 		
-		//fillière input field
+		//filliï¿½re input field
 		String[] fillieres = { "2ITE", "ISIC", "G2E", "GI"};
 		filliereList = new JComboBox<Object>(fillieres);
 		filliereList.setSelectedIndex(0);
@@ -277,6 +278,9 @@ public class SignUpEtudiant extends JPanel {
 				cneInput.setText("");
 				adresseInput.setText("");
 				filliereList.setSelectedIndex(0);
+				JOptionPane.showMessageDialog(signUpButton, "Votre compte ne sera accessible qu'aprÃ¨s sa validation",  
+				"Message",  
+				JOptionPane.INFORMATION_MESSAGE);
 				cl.show(cards, "sign in page");
 			}
 		});
@@ -289,7 +293,7 @@ public class SignUpEtudiant extends JPanel {
 		signUpButtonPanel.add(signUpButton);
 		
 		//sign up link label
-		signUpLinkLabel = new JLabel("Vous avez déjà un compte ? Se connecter");
+		signUpLinkLabel = new JLabel("Vous avez dï¿½jï¿½ un compte ? Se connecter");
 		signUpLinkLabel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {

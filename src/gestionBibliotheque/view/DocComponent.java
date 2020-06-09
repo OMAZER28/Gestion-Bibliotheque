@@ -23,7 +23,6 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -43,14 +42,9 @@ import gestionBibliotheque.model.utilisateurs.Bibliothecaire;
 import gestionBibliotheque.model.utilisateurs.Utilisateur;
 
 public class DocComponent extends JPanel {
-
-	//Componenets
 	private static final long serialVersionUID = 1L;
 	private JPanel header, content, footer;
-	private JLabel image, titre, cote, etat, auteur, nomEditeur, Periodicite, disponibilite,parution, numLecteur, dateDebut, dateFin, delai, reservation, suppression;
-	
-	
-	//informations
+	private JLabel image, titre, cote, etat, auteur, nomEditeur, Periodicite, disponibilite,parution, reservation, suppression;
 	private Utilisateur user;
 	private String docType;
 	private int docId;
@@ -62,11 +56,6 @@ public class DocComponent extends JPanel {
 	private String docPeriodicite;
 	private String docDisponibilite;
 	private String docDateParution;
-	private int docNumLecteur;
-	private String empruntDateDebut;
-	private String empruntDateFin;
-	private int empruntDelai;
-
 
 	public DocComponent(Utilisateur user,
 			String docType,
@@ -79,12 +68,8 @@ public class DocComponent extends JPanel {
 			int docId,
 			String docPeriodicite,
 			String docDateParution,
-			JPanel livres_panel,
-			String mot,
-			int docNumLecteur,
-			String empruntDateDebut,
-			String empruntDateFin,
-			int empruntDelai) {
+			JPanel doc_panel,
+			String mot) {
 		
 		this.user = user;
 		this.docType = docType;
@@ -98,15 +83,11 @@ public class DocComponent extends JPanel {
 		this.docPeriodicite = docPeriodicite;
 		this.docDateParution = docDateParution;
 		this.docDisponibilite = docDisponibilite;
-		this.docNumLecteur = docNumLecteur;
-		this.empruntDateDebut = empruntDateDebut;
-		this.empruntDateFin = empruntDateFin;
-		this.empruntDelai = empruntDelai;
 		
-		Dimension d1 = new Dimension(250,400);
-		Dimension d2 = new Dimension(200,200);
-		Dimension d3 = new Dimension(250,150);
-		Dimension d4 = new Dimension(250,50);
+		Dimension d1 = new Dimension(210,290);
+		Dimension d2 = new Dimension(110,120);
+		Dimension d3 = new Dimension(210,130);
+		Dimension d4 = new Dimension(210,40);
 		
 		Color borderColor;
 		String imageSource;
@@ -118,13 +99,9 @@ public class DocComponent extends JPanel {
 			borderColor = new Color(50,250,200);
 			imageSource = "images/revue.png";
 		}
-		else if(docType == "livre emprunt"){
-			borderColor = new Color(255,200,0);
-			imageSource = "images/livre.png";
-		}
 		else {
 			borderColor = new Color(255,200,0);
-			imageSource = "images/revue.png";
+			imageSource = "images/livre.png";
 		}
 		
 		this.setLayout(new BorderLayout(0,0));
@@ -160,7 +137,7 @@ public class DocComponent extends JPanel {
 		} catch (IOException ioe) {
 		    ioe.printStackTrace();
 		}
-		Image dlivreImage = livreImage.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+		Image dlivreImage = livreImage.getScaledInstance(110, 110, Image.SCALE_SMOOTH);
 		ImageIcon livreIcon = new ImageIcon(dlivreImage);
 		image.setIcon(livreIcon);
 		header.add(image);
@@ -168,84 +145,56 @@ public class DocComponent extends JPanel {
 		titre = new JLabel(getDocTitre());
 		titre.setHorizontalAlignment(SwingConstants.CENTER);
 		titre.setForeground(Color.DARK_GRAY);
-		Font titreFont = new Font("Arial", Font.BOLD, 25);
+		Font titreFont = new Font("Arial", Font.BOLD, 18);
 		titre.setFont(titreFont);
 		
 		cote = new JLabel("Cote : " + String.valueOf(getDocCote()));
 		cote.setHorizontalAlignment(SwingConstants.LEFT);
 		cote.setForeground(Color.DARK_GRAY);
 		cote.setBorder(new EmptyBorder(new Insets(0, 15, 0, 0)));
-		Font coteFont = new Font("Arial", Font.PLAIN, 15);
+		Font coteFont = new Font("Arial", Font.PLAIN, 12);
 		cote.setFont(coteFont);
 		
 		etat = new JLabel("Etat : " + getDocEtat());
 		etat.setHorizontalAlignment(SwingConstants.LEFT);
 		etat.setForeground(Color.DARK_GRAY);
 		etat.setBorder(new EmptyBorder(new Insets(0, 15, 0, 0)));
-		Font etatFont = new Font("Arial", Font.PLAIN, 15);
+		Font etatFont = new Font("Arial", Font.PLAIN, 12);
 		etat.setFont(etatFont);
 		
 		auteur = new JLabel("Auteur : " + getDocAuteur());
 		auteur.setHorizontalAlignment(SwingConstants.LEFT);
 		auteur.setForeground(Color.DARK_GRAY);
 		auteur.setBorder(new EmptyBorder(new Insets(0, 15, 0, 0)));
-		Font auteurFont = new Font("Arial", Font.PLAIN, 15);
+		Font auteurFont = new Font("Arial", Font.PLAIN, 12);
 		auteur.setFont(auteurFont);
 
 		nomEditeur = new JLabel("Nom de l'editeur : " + getDocNomEditeur());
 		nomEditeur.setHorizontalAlignment(SwingConstants.LEFT);
 		nomEditeur.setForeground(Color.DARK_GRAY);
 		nomEditeur.setBorder(new EmptyBorder(new Insets(0, 15, 0, 0)));
-		Font nomEditeurFont = new Font("Arial", Font.PLAIN, 15);
+		Font nomEditeurFont = new Font("Arial", Font.PLAIN, 12);
 		nomEditeur.setFont(nomEditeurFont);
-		
-		numLecteur = new JLabel("Num de Lecteur : " + String.valueOf(getDocNumLecteur()));
-		numLecteur.setHorizontalAlignment(SwingConstants.LEFT);
-		numLecteur.setForeground(Color.DARK_GRAY);
-		numLecteur.setBorder(new EmptyBorder(new Insets(0, 15, 0, 0)));
-		Font numLecteurFont = new Font("Arial", Font.PLAIN, 15);
-		numLecteur.setFont(numLecteurFont);
-		
-		dateDebut = new JLabel("Date début : " + getEmpruntDateDebut());
-		dateDebut.setHorizontalAlignment(SwingConstants.LEFT);
-		dateDebut.setForeground(Color.DARK_GRAY);
-		dateDebut.setBorder(new EmptyBorder(new Insets(0, 15, 0, 0)));
-		Font dateDebutFont = new Font("Arial", Font.PLAIN, 15);
-		dateDebut.setFont(dateDebutFont);
-		
-		dateFin = new JLabel("Date fin : " + getEmpruntDateFin());
-		dateFin.setHorizontalAlignment(SwingConstants.LEFT);
-		dateFin.setForeground(Color.DARK_GRAY);
-		dateFin.setBorder(new EmptyBorder(new Insets(0, 15, 0, 0)));
-		Font dateFinFont = new Font("Arial", Font.PLAIN, 15);
-		dateFin.setFont(dateFinFont);
-
-		delai = new JLabel("Délai : " + getEmpruntDelai());
-		delai.setHorizontalAlignment(SwingConstants.LEFT);
-		delai.setForeground(Color.DARK_GRAY);
-		delai.setBorder(new EmptyBorder(new Insets(0, 15, 0, 0)));
-		Font delaiFont = new Font("Arial", Font.PLAIN, 15);
-		delai.setFont(delaiFont);
 		
 		Periodicite = new JLabel("Périodicité : " + getDocPeriodicite());
 		Periodicite.setForeground(Color.DARK_GRAY);
 		Periodicite.setHorizontalAlignment(SwingConstants.LEFT);
 		Periodicite.setBorder(new EmptyBorder(new Insets(0, 15, 0, 0)));
-		Font PeriodiciteFont = new Font("Arial", Font.PLAIN, 15);
+		Font PeriodiciteFont = new Font("Arial", Font.PLAIN, 12);
 		Periodicite.setFont(PeriodiciteFont);
 
 		parution = new JLabel("Date de parution : " + getDocDateParution());
 		parution.setForeground(Color.DARK_GRAY);
 		parution.setHorizontalAlignment(SwingConstants.LEFT);
 		parution.setBorder(new EmptyBorder(new Insets(0, 15, 0, 0)));
-		Font parutionFont = new Font("Arial", Font.PLAIN, 15);
+		Font parutionFont = new Font("Arial", Font.PLAIN, 12);
 		parution.setFont(parutionFont);
 		
 		disponibilite = new JLabel(getDocDisponibilite());
 		disponibilite.setHorizontalAlignment(SwingConstants.LEFT);
 		disponibilite.setForeground(new Color(0,120,255));
 		disponibilite.setBorder(new EmptyBorder(new Insets(0, 15, 0, 0)));
-		Font disponibiliteFont = new Font("Verdana", Font.PLAIN, 15);
+		Font disponibiliteFont = new Font("Verdana", Font.PLAIN, 12);
 		disponibilite.setFont(disponibiliteFont);
 		
 		reservation = new JLabel("Réserver");
@@ -272,10 +221,10 @@ public class DocComponent extends JPanel {
 			                            JOptionPane.WARNING_MESSAGE);
 			                }
 							else {
-				                livres_panel.removeAll();
-				                livres_panel.getGraphics().clearRect(0, 0, livres_panel.getWidth(), livres_panel.getHeight());
-				                livres_panel.revalidate();
-				                livres_panel.repaint();
+				                doc_panel.removeAll();
+				                doc_panel.getGraphics().clearRect(0, 0, doc_panel.getWidth(), doc_panel.getHeight());
+				                doc_panel.revalidate();
+				                doc_panel.repaint();
 				                
 				              
 				                
@@ -286,12 +235,12 @@ public class DocComponent extends JPanel {
 										for( int i=0; i<obj.size();i++) {
 											Object[] o =(Object[]) obj.get(i);
 				            				if(i%2==1) {
-				            					livres_panel.setPreferredSize(new Dimension(0,((i+1)*300/2+(i+1)*150/2)));
+				            					doc_panel.setPreferredSize(new Dimension(0,((i+1)*300/2+(i+1)*150/2)));
 				            				}
 				            				if(i%2==0) {
-				            					livres_panel.setPreferredSize(new Dimension(0,((i+2)*300/2+(i+2)*150/2)));
+				            					doc_panel.setPreferredSize(new Dimension(0,((i+2)*300/2+(i+2)*150/2)));
 				            				}
-											livres_panel.add(new DocComponent(user,"livre",(int)o[0], (String)o[1], (String)o[2], (String)o[3], (String)o[4], (String)o[5],0,"","",livres_panel,mot,0,"","",0));
+											doc_panel.add(new DocComponent(user,"livre",(int)o[0], (String)o[1], (String)o[2], (String)o[3], (String)o[4], (String)o[5],0,"","",doc_panel,mot));
 										}
 										
 									
@@ -306,12 +255,12 @@ public class DocComponent extends JPanel {
 				                			for( int i=0; i<obj.size();i++) {
 				                				Object[] o =(Object[]) obj.get(i);
 				                				if(i%2==1) {
-				                					livres_panel.setPreferredSize(new Dimension(0,((i+1)*300/2+(i+1)*150/2)));
+				                					doc_panel.setPreferredSize(new Dimension(0,((i+1)*300/2+(i+1)*150/2)));
 				                				}
 				                				if(i%2==0) {
-				                					livres_panel.setPreferredSize(new Dimension(0,((i+2)*300/2+(i+2)*150/2)));
+				                					doc_panel.setPreferredSize(new Dimension(0,((i+2)*300/2+(i+2)*150/2)));
 				                				}
-				                				livres_panel.add(new DocComponent(user,"livre",(int)o[0], (String)o[1], (String)o[2], (String)o[3], (String)o[4], (String)o[5],0,"","",livres_panel,mot,0,"","",0));
+				                				doc_panel.add(new DocComponent(user,"livre",(int)o[0], (String)o[1], (String)o[2], (String)o[3], (String)o[4], (String)o[5],0,"","",doc_panel,mot));
 				                			}
 				                			
 				                		
@@ -336,7 +285,7 @@ public class DocComponent extends JPanel {
 		} catch (IOException e) {
 		    e.printStackTrace();
 		}
-		Image dreservationImage = reservationImage.getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+		Image dreservationImage = reservationImage.getScaledInstance(22, 22, Image.SCALE_SMOOTH);
 		ImageIcon reservationIcon = new ImageIcon(dreservationImage);
 		reservation.setIcon(reservationIcon);
 		reservation.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -344,8 +293,9 @@ public class DocComponent extends JPanel {
 		reservation.setHorizontalAlignment(SwingConstants.LEFT);
 		reservation.setForeground(new Color(0,255,200));
 		reservation.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
-		Font reservationFont = new Font("Verdana", Font.PLAIN, 15);
+		Font reservationFont = new Font("Verdana", Font.PLAIN, 12);
 		reservation.setFont(reservationFont);
+		
 		
 		suppression = new JLabel("Supprimer");
 		suppression.addMouseListener(new MouseAdapter() {
@@ -361,10 +311,10 @@ public class DocComponent extends JPanel {
 								JOptionPane.showMessageDialog(suppression, "Cet exemplaire a été supprimé avec succès!",  
 			                            "Suppression avec succès",  
 			                            JOptionPane.INFORMATION_MESSAGE);
-				                livres_panel.removeAll();
-				                livres_panel.getGraphics().clearRect(0, 0, livres_panel.getWidth(), livres_panel.getHeight());
-				                livres_panel.revalidate();
-				                livres_panel.repaint();
+				                doc_panel.removeAll();
+				                doc_panel.getGraphics().clearRect(0, 0, doc_panel.getWidth(), doc_panel.getHeight());
+				                doc_panel.revalidate();
+				                doc_panel.repaint();
 				                if(mot=="") {
 									try {
 										ExemplaireDAO exempDAO = new ExemplaireDAO();
@@ -372,12 +322,12 @@ public class DocComponent extends JPanel {
 										for( int i=0; i<obj.size();i++) {
 											Object[] o =(Object[]) obj.get(i);
 				            				if(i%2==1) {
-				            					livres_panel.setPreferredSize(new Dimension(0,((i+1)*300/2+(i+1)*150/2)));
+				            					doc_panel.setPreferredSize(new Dimension(0,((i+1)*300/2+(i+1)*150/2)));
 				            				}
 				            				if(i%2==0) {
-				            					livres_panel.setPreferredSize(new Dimension(0,((i+2)*300/2+(i+2)*150/2)));
+				            					doc_panel.setPreferredSize(new Dimension(0,((i+2)*300/2+(i+2)*150/2)));
 				            				}
-											livres_panel.add(new DocComponent(user,"livre",(int)o[0], (String)o[1], (String)o[2], (String)o[3], (String)o[4], (String)o[5],0,"","",livres_panel,mot,0,"","",0));
+											doc_panel.add(new DocComponent(user,"livre",(int)o[0], (String)o[1], (String)o[2], (String)o[3], (String)o[4], (String)o[5],0,"","",doc_panel,mot));
 										}
 										
 									
@@ -392,12 +342,12 @@ public class DocComponent extends JPanel {
 				                			for( int i=0; i<obj.size();i++) {
 				                				Object[] o =(Object[]) obj.get(i);
 				                				if(i%2==1) {
-				                					livres_panel.setPreferredSize(new Dimension(0,((i+1)*300/2+(i+1)*150/2)));
+				                					doc_panel.setPreferredSize(new Dimension(0,((i+1)*300/2+(i+1)*150/2)));
 				                				}
 				                				if(i%2==0) {
-				                					livres_panel.setPreferredSize(new Dimension(0,((i+2)*300/2+(i+2)*150/2)));
+				                					doc_panel.setPreferredSize(new Dimension(0,((i+2)*300/2+(i+2)*150/2)));
 				                				}
-				                				livres_panel.add(new DocComponent(user,"livre",(int)o[0], (String)o[1], (String)o[2], (String)o[3], (String)o[4], (String)o[5],0,"","",livres_panel,mot,0,"","",0));
+				                				doc_panel.add(new DocComponent(user,"livre",(int)o[0], (String)o[1], (String)o[2], (String)o[3], (String)o[4], (String)o[5],0,"","",doc_panel,mot));
 				                			}
 				                			
 				                		
@@ -423,17 +373,17 @@ public class DocComponent extends JPanel {
 							JOptionPane.showMessageDialog(suppression, "Cette revue a été supprimé avec succès!",  
 		                            "Suppression avec succès",  
 		                            JOptionPane.INFORMATION_MESSAGE);
-			                livres_panel.removeAll();
-			                livres_panel.getGraphics().clearRect(0, 0, livres_panel.getWidth(), livres_panel.getHeight());
-			                livres_panel.revalidate();
-			                livres_panel.repaint();
+			                doc_panel.removeAll();
+			                doc_panel.getGraphics().clearRect(0, 0, doc_panel.getWidth(), doc_panel.getHeight());
+			                doc_panel.revalidate();
+			                doc_panel.repaint();
 			                if(mot=="") {
 								try {
 									RevueDAO revueDAO = new RevueDAO();
 									List<Revue> obj = revueDAO.getAllRevue();
 									for( int i=0; i<obj.size();i++) {
 										Revue o = obj.get(i);
-										livres_panel.add(new DocComponent(user,"revue",0,o.getTitre(),"","","","",o.getId(),o.getPeriodicite(),o.getDateParution(),livres_panel,mot,0,"","",0));									}
+										doc_panel.add(new DocComponent(user,"revue",0,o.getTitre(),"","","","",o.getId(),o.getPeriodicite(),o.getDateParution(),doc_panel,mot));									}
 								}catch(DAOException ex) {
 									System.out.println(ex);
 								}
@@ -444,7 +394,7 @@ public class DocComponent extends JPanel {
 									List<Revue> obj = revueDAO.searchRevue(mot);
 									for( int i=0; i<obj.size();i++) {
 										Revue o = obj.get(i);
-										livres_panel.add(new DocComponent(user,"revue",0,o.getTitre(),"","","","",o.getId(),o.getPeriodicite(),o.getDateParution(),livres_panel,mot,0,"","",0));									}
+										doc_panel.add(new DocComponent(user,"revue",0,o.getTitre(),"","","","",o.getId(),o.getPeriodicite(),o.getDateParution(),doc_panel,mot));									}
 								}catch(DAOException ex) {
 									System.out.println(ex);
 								}
@@ -463,14 +413,14 @@ public class DocComponent extends JPanel {
 		} catch (IOException e) {
 		    e.printStackTrace();
 		}
-		Image dsuppressionImage = suppressionImage.getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+		Image dsuppressionImage = suppressionImage.getScaledInstance(22, 22, Image.SCALE_SMOOTH);
 		ImageIcon suppressionIcon = new ImageIcon(dsuppressionImage);
 		suppression.setIcon(suppressionIcon);
 		suppression.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		suppression.setHorizontalAlignment(SwingConstants.LEFT);
 		suppression.setForeground(new Color(255,80,0));
 		suppression.setBorder(new EmptyBorder(new Insets(0, 15, 0, 0)));
-		Font suppressionFont = new Font("Verdana", Font.PLAIN, 15);
+		Font suppressionFont = new Font("Verdana", Font.PLAIN, 12);
 		suppression.setFont(suppressionFont);
 		
 		
@@ -652,46 +602,4 @@ public class DocComponent extends JPanel {
 	public void setDocDateParution(String docDateParution) {
 		this.docDateParution = docDateParution;
 	}
-
-
-	public int getDocNumLecteur() {
-		return docNumLecteur;
-	}
-
-
-	public void setDocNumLecteur(int docNumLecteur) {
-		this.docNumLecteur = docNumLecteur;
-	}
-
-
-	public String getEmpruntDateDebut() {
-		return empruntDateDebut;
-	}
-
-
-	public void setEmpruntDateDebut(String empruntDateDebut) {
-		this.empruntDateDebut = empruntDateDebut;
-	}
-
-
-	public String getEmpruntDateFin() {
-		return empruntDateFin;
-	}
-
-
-	public void setEmpruntDateFin(String empruntDateFin) {
-		this.empruntDateFin = empruntDateFin;
-	}
-
-
-	public int getEmpruntDelai() {
-		return empruntDelai;
-	}
-
-
-	public void setEmpruntDelai(int empruntDelai) {
-		this.empruntDelai = empruntDelai;
-	}
-	
-	
 }
