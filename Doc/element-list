@@ -1,0 +1,9 @@
+gestionBibliotheque.controller
+gestionBibliotheque.dao
+gestionBibliotheque.dao.document
+gestionBibliotheque.dao.services
+gestionBibliotheque.dao.utilisateurs
+gestionBibliotheque.model.documents
+gestionBibliotheque.model.services
+gestionBibliotheque.model.utilisateurs
+gestionBibliotheque.view
